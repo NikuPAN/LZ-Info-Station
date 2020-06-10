@@ -1,13 +1,13 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
- 
-class Ranking extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      columnDefs: ([
+
+export default function RankingTop10() {
+
+    const [rowData, setRowData] = useState([]);
+    const [gridApi, setGridApi] = useState(null);
+    const [columnDefs, setColumnDefs] = useState([
         { headerName: "Top", field: "top", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
         { headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", maxWidth: 130 },
         { headerName: "イベントpt", field: "eventpt", sortable: true, filter: "agNumberColumnFilter", maxWidth: 130 },
@@ -21,22 +21,53 @@ class Ranking extends Component {
         { headerName: "pt/10分", field: "point_10mins", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
         { headerName: "pt/30分", field: "point_30mins", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
         { headerName: "pt/60分", field: "point_60mins", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "休憩(min)", field: "rest", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-      ]),
-      rowData: ([]),
-      gridApi: null
+        { headerName: "休憩(min)", field: "rest", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 }
+    ]);
 
-    };
-  }
+    useEffect(() => {
+			fetch("https://cronpublic.yasushi.me/ranking.json")
+				.then(res => res.json())
+				.then(data =>
+					data.map(rank => {
+						return {
+								timestamp: stock.timestamp,
+								date: timestampToDDMMYYYY(stock.timestamp),
+								symbol: stock.symbol,
+								name: stock.name,
+								industry: stock.industry,
+								open: stock.open,
+								high: stock.high,
+								low: stock.low,
+								close: stock.close,
+								volumes: stock.volumes
+						};
+					})
+				)
+				.then(ranks => setRowData(ranks));
+	}, [rowData]);
 
-  render() {
-    return (
-      <div>
-        <h2>TOP 10 股票系統</h2>
-        
-      </div>
-    );
-  }
+  function onGridReady(params) {
+		setGridApi(params.api);
+		//console.log(rowData);
+	}
+
+	function updateColumn(newColumn) {
+		
+	}
+
+	return (
+		<div>
+			<div id="myGrid" className="ag-theme-alpine-dark"
+			style={{ height: "500px", width: "100%" }} >
+			<AgGridReact
+				columnDefs={this.state.columnDefs}
+				rowData={this.state.rowData}
+				onGridReady={onGridReady}
+				// onRowClicked={}
+				pagination={true}
+				paginationPageSize={10}
+			/>
+			</div>
+		</div>
+	);
 }
-
-export default Ranking;
