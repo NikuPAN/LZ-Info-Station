@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
@@ -16,6 +16,32 @@ class Ranking extends Component {
       fastestRoundSec: 125
     };
   }
+
+  //Strings to their exact timestamp in seconds
+  dayTimeToTimestamp(date, time) {
+    var res = [], res2 = [];
+    var year = 0, month = 0, day = 0, hour = 0;
+    if(date.includes("-")) {
+      res = date.split("-");
+      if(res.length === 3) {
+        year = parseInt(res[0]);
+        month = parseInt(res[1]);
+        day = parseInt(res[2]);
+      }
+    }
+    if(time.includes(":")) {
+      res2 = time.split(":");
+      if(res2.length !== 0) {
+        hour = parseInt(res2[0]);
+      }
+    }
+    // to JP time
+    var datum = new Date(Date.UTC(year,month-1,day,hour-9,0,0));
+
+    //var datum = new Date(date+"T"+time+":00.000+09:00");
+    return datum.getTime()/1000;
+  }
+
   render() {
     return (
       <div>
@@ -31,7 +57,12 @@ class Ranking extends Component {
           周回理論時間: <b>{this.state.fastestRoundSec} 秒</b>
         </h4>
         <br/>
-        <RankingTop10 />
+        <RankingTop10 
+          eventStartTimestamp={this.dayTimeToTimestamp(this.state.eventStartDate, this.state.eventStartTime)}
+          eventDuration={this.state.eventDurationHr}
+          roundMaxPt={this.state.roundMaxPoint}
+          fastestRound={this.state.fastestRoundSec}
+        />
       </div>
     );
   }

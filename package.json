@@ -10,6 +10,7 @@
     "ag-grid-react": "^23.2.0",
     "ngrok": "^3.2.7",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1"

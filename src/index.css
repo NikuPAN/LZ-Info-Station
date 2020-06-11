@@ -27,7 +27,13 @@ code {
   align-items: center;
 }
 
-
+.progress-bar {
+  position: relative;
+  height: 20px;
+  width: 100%;
+  border-radius: 3px;
+  border: 1px solid #fff;
+}
 
 h1, h2, p, ul, li {
   font-family: "微軟正黑體", "Microsoft JhengHei",  Tahoma , Verdana , Arial , sans-serif;
@@ -38,6 +44,16 @@ h3, h4 {
 	font-family: "微軟正黑體", "Microsoft JhengHei",  Tahoma , Verdana , Arial , sans-serif;
   font-weight: normal;
   text-align: center;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+h5 {
+  font-family: "微軟正黑體", "Microsoft JhengHei",  Tahoma , Verdana , Arial , sans-serif;
+  font-weight: lighter;
+  text-align: left;
   margin-left: 2.5%;
   margin-right: 2.5%;
   margin-top: 0px;
