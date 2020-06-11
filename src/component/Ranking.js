@@ -1,39 +1,37 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+import RankingTop10 from "./RankingTop10";
  
 class Ranking extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      columnDefs: ([
-        { headerName: "Top", field: "top", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", maxWidth: 130 },
-        { headerName: "イベントpt", field: "eventpt", sortable: true, filter: "agNumberColumnFilter", maxWidth: 130 },
-        { headerName: "ボーナス", field: "bonus", sortable: true, filter: "agNumberColumnFilter", maxWidth: 120 },
-        { headerName: "1位差", field: "diff_1st", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "前位差", field: "diff_last", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: "agNumberColumnFilter", maxWidth: 150 },
-        { headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, maxWidth: 150 },
-        { headerName: "pt時速", field: "point_per_hour", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "平均周回時速", field: "round_per_hour", sortable: true, filter: "agNumberColumnFilter", maxWidth: 150 },
-        { headerName: "pt/10分", field: "point_10mins", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "pt/30分", field: "point_30mins", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "pt/60分", field: "point_60mins", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-        { headerName: "休憩(min)", field: "rest", sortable: true, filter: "agNumberColumnFilter", maxWidth: 100 },
-      ]),
-      rowData: ([]),
-      gridApi: null
-
+      eventTitle: "RAISE A SUILEN～御簾を上げろ～（前編）",
+      eventStartDate: "2020-6-10",
+      eventStartTime: "15:00",
+      eventDurationHr: 198,
+      roundMaxPoint: 22830,
+      fastestRoundSec: 125
     };
   }
-
   render() {
     return (
       <div>
-        <h2>TOP 10 股票系統</h2>
-        
+        <h2>TOP 10 - <b>{this.state.eventTitle}</b></h2>
+        {/* <h4>スタート日: <b>{this.state.eventStartDate}</b></h4>
+        <h4>イベント時間: <b>{this.state.eventDurationHr}</b></h4>
+        <h4>周回理論PT: <b>{this.state.roundMaxPoint}</b></h4>
+        <h4>周回理論時間: <b>{this.state.fastestRoundSec} 秒</b></h4> */}
+        <h4>
+          スタート日: <b>{this.state.eventStartDate} </b> | 
+          イベント時間: <b>{this.state.eventDurationHr}</b> | 
+          周回理論PT: <b>{this.state.roundMaxPoint}</b> |
+          周回理論時間: <b>{this.state.fastestRoundSec} 秒</b>
+        </h4>
+        <br/>
+        <RankingTop10 />
       </div>
     );
   }

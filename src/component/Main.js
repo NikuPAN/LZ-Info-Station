@@ -12,7 +12,7 @@ class Main extends Component {
     return (
       <HashRouter>
         <div>
-          <h2>LZ資訊站</h2>
+          {/* <h2>LZ資訊站</h2> */}
           <ul className="header">
             <li><NavLink exact to="/">主頁</NavLink></li>
             <li><NavLink to="/ranking">股票</NavLink></li>
@@ -31,7 +31,6 @@ class Main extends Component {
           </div>
         </div>
       </HashRouter>
-        
     );
   }
 }

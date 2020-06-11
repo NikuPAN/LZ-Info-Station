@@ -19,25 +19,51 @@ code {
   margin: 0;
 } */
 
-.active {
-  background-color: #0099FF;
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+
 
 h1, h2, p, ul, li {
   font-family: "微軟正黑體", "Microsoft JhengHei",  Tahoma , Verdana , Arial , sans-serif;
+  font-weight: normal;
 }
+
+h3, h4 {
+	font-family: "微軟正黑體", "Microsoft JhengHei",  Tahoma , Verdana , Arial , sans-serif;
+  font-weight: normal;
+  text-align: center;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
 ul.header li {
   display: inline;
   list-style-type: none;
   margin: 0;
 }
+
 ul.header {
   background-color: #111;
   padding: 0;
+  
 }
+
+.active {
+  background-color: #0099FF;
+  /* font-weight: bold; */
+}
+
 ul.header li a {
   color: #FFF;
-  font-weight: bold;
+  font-weight: normal;
   text-decoration: none;
   padding: 20px;
   display: inline-block;
