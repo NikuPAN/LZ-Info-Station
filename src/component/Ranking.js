@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+// import { AgGridReact } from "ag-grid-react";
+// import "ag-grid-community/dist/styles/ag-grid.css";
+// import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+
 import RankingTop10 from "./RankingTop10";
+import EventDetail from "./EventDetail";
  
 class Ranking extends Component {
   constructor(props) {
@@ -35,10 +37,8 @@ class Ranking extends Component {
         hour = parseInt(res2[0]);
       }
     }
-    // to JP time
+    // Force to JP time
     var datum = new Date(Date.UTC(year,month-1,day,hour-9,0,0));
-
-    //var datum = new Date(date+"T"+time+":00.000+09:00");
     return datum.getTime()/1000;
   }
 
@@ -46,10 +46,6 @@ class Ranking extends Component {
     return (
       <div>
         <h2>TOP 10 - <b>{this.state.eventTitle}</b></h2>
-        {/* <h4>スタート日: <b>{this.state.eventStartDate}</b></h4>
-        <h4>イベント時間: <b>{this.state.eventDurationHr}</b></h4>
-        <h4>周回理論PT: <b>{this.state.roundMaxPoint}</b></h4>
-        <h4>周回理論時間: <b>{this.state.fastestRoundSec} 秒</b></h4> */}
         <h4>
           スタート日: <b>{this.state.eventStartDate} </b> | 
           イベント時間: <b>{this.state.eventDurationHr}</b> | 
@@ -63,6 +59,15 @@ class Ranking extends Component {
           roundMaxPt={this.state.roundMaxPoint}
           fastestRound={this.state.fastestRoundSec}
         />
+        <div class="editmenu">
+          <EventDetail 
+            eventTitle={this.state.eventTitle}
+            eventStartTimestamp={this.dayTimeToTimestamp(this.state.eventStartDate, this.state.eventStartTime)}
+            eventDuration={this.state.eventDurationHr}
+            roundMaxPt={this.state.roundMaxPoint}
+            fastestRound={this.state.fastestRoundSec}
+          />
+        </div>
       </div>
     );
   }

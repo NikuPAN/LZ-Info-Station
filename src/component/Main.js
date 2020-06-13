@@ -6,6 +6,7 @@ import Rankingtips from "./Rankingtips";
 import Joke from "./Joke";
 import AboutLZ from "./AboutLZ";
 import Recommend from "./Recommend";
+import Login from "./Login";
  
 class Main extends Component {
   render() {
@@ -20,6 +21,7 @@ class Main extends Component {
             <li><NavLink to="/jokes">梗/梗圖/SY</NavLink></li>
             <li><NavLink to="/aboutlz">關於LZ</NavLink></li>
             <li><NavLink to="/recommend">系統建議</NavLink></li>
+            <li><NavLink to="/login">登入</NavLink></li>
           </ul>
           <div className="content">
             <Route exact path="/" component={Home}/>
@@ -28,6 +30,7 @@ class Main extends Component {
             <Route path="/jokes" component={Joke}/>
             <Route path="/aboutlz" component={AboutLZ}/>
             <Route path="/recommend" component={Recommend}/>
+            <Route path="/login" component={Login}/>
           </div>
         </div>
       </HashRouter>

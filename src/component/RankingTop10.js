@@ -13,6 +13,13 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 	// var gridData = [];
 	var formattedTimestamp = timestampToDateTime(rawData.lastModified);
 	var eventProgressed = getTimeDifference(rawData.lastModified, eventStartTimestamp);
+		// var trackingIDs = [
+	// 	{ id: 0, name: null },
+	// 	{ id: 0, name: null },
+	// 	{ id: 0, name: null },
+	// 	{ id: 0, name: null },
+	// 	{ id: 0, name: null }
+	// ];
 
 	const [columnDefs, setColumnDefs] = useState([
 			{ headerName: "Top", field: "rank", sortable: true, filter: "agNumberColumnFilter", maxWidth: 80 },
@@ -44,7 +51,7 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 		let result = [];
 		if(data.topUsers) {
 			let top10 = data.topUsers;
-			console.log(top10.length);
+			//console.log(top10.length);
 			for (var i = 0; i < top10.length; i++) {
 				result.push({
 					rank: top10[i].rank,
@@ -113,10 +120,19 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
     // columnAPI.autoSizeColumns(allColumnIds, false);
 	}
 
+	// // not yet implemented
+	// function updateTrackingID(event, id) {
+	// 	var val = event.target.value;
+	// 	if(isNaN(val)) {
+
+	// 	}
+	// 	trackingIDs[id].id = parseInt(event.target.value);
+	// }
+
 	async function getAllData() {
 		let response = await fetch("https://cronpublic.yasushi.me/ranking.json");
 		let data = await response.json();
-		console.log(data);
+		//console.log(data);
 		return data;
 	}
 
@@ -147,8 +163,8 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 			<div>
 				{/* <h4>最終更新日時: {formattedTimestamp}</h4> */}
 				{/* <h5>dump: {eventStartTimestamp}, {eventDuration}, {roundMaxPt}, {fastestRound} </h5> */}
-				<h5>活動進度: {secondsToHrsAndMins(eventProgressed)}</h5>
-				<h5>活動剩餘: {secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)}</h5>
+				<h5>活動進度: {secondsToHrsAndMins(eventProgressed)} (剩餘: {secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)})
+				</h5>
 			</div>
 			<div>
 				<ProgressBar animated now={95} />
@@ -169,6 +185,36 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 			<div>
 				<h5>最終更新日時: {formattedTimestamp}</h5>
 			</div>
+			{/* <div>
+				<h6>
+         <form>
+					 <tr>
+						 <td>ID</td>
+						 <td>顯示文字</td>
+					 </tr>
+					 <tr>
+						 <td><input id="trackID1" name="trackID1" type="number" onChange={updateTrackingID(0)} /></td>
+						 <td><input id="trackName1" name="trackName1" onChange={updateTrackingID(0)} /></td>
+					 </tr>
+					 <tr>
+						 <td><input id="trackID2" name="trackID2" type="number" onChange={updateTrackingID(1)} /></td>
+						 <td><input id="trackName2" name="trackName2" onChange={updateTrackingID(1)} /></td>
+					 </tr>
+					 <tr>
+						 <td><input id="trackID3" name="trackID3" type="number" onChange={updateTrackingID(2)} /></td>
+						 <td><input id="trackName3" name="trackName3" onChange={updateTrackingID(2)} /></td>
+					 </tr>
+					 <tr>
+						 <td><input id="trackID4" name="trackID4" type="number" onChange={updateTrackingID(3)} /></td>
+						 <td><input id="trackName4" name="trackName4" onChange={updateTrackingID(3)} /></td>
+					 </tr>
+					 <tr>
+						 <td><input id="trackID5" name="trackID5" type="number" onChange={updateTrackingID(4)} /></td>
+						 <td><input id="trackName5" name="trackName5" onChange={updateTrackingID(4)} /></td>
+					 </tr>
+				 </form>
+				 </h6>
+			</div> */}
 		</div>
 	);
 }

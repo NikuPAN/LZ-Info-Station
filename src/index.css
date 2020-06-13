@@ -27,6 +27,14 @@ code {
   align-items: center;
 }
 
+.editmenu {
+  height: 100%;
+  width: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .progress-bar {
   position: center;
   height: 20px;
@@ -62,8 +70,18 @@ h5 {
   margin-bottom: 0px;
 }
 
+h6 {
+  font-family: "微軟正黑體", "Microsoft JhengHei",  Tahoma , Verdana , Arial , sans-serif;
+  font-weight: lighter;
+  text-align: left;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
 ul.header li {
-  display: inline;
+  display: inline-block;
   list-style-type: none;
   margin: 0;
 }
@@ -100,4 +118,8 @@ ul.header li a {
 
 .ag-header-cell-text {
   flex: 1;
+}
+
+.mat-expansion-panel-header.mat-expanded {
+  background: red;
 }
