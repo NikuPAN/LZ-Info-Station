@@ -3,9 +3,8 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import UserStore from "../stores/UserStore";
 
-export default function RankingTop10({eventStartTimestamp, eventDuration, roundMaxPt, fastestRound}) {
+export default function RankingTop10({eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
 
 	const [rawData, setRawData] = useState([]);
 	const [rowRecord, setRowRecord] = useState([[]]);
@@ -25,22 +24,83 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 
 	const [columnDefs, setColumnDefs] = useState([
 			{ headerName: "Top", field: "rank", sortable: true, filter: "agNumberColumnFilter", maxWidth: 80 },
-			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 150 },
-			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 130 },
+			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 130 },
+			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 120 },
 			{ headerName: "ボーナス", field: "bonus", sortable: true, filter: false, maxWidth: 100 },
-			{ headerName: "1位差", field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 120 },
-			{ headerName: "前位差", field: "diff_last", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 120 },
-			{ headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 150 },
-			{ headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, maxWidth: 150 },
+			{ headerName: "1位差", field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
+			{ headerName: "前位差", field: "diff_last", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
+			{ headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setDiffLastRoundCellStyle(params), maxWidth: 120 },
+			{ headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, cellStyle: params => setCatchTimeCellStyle(params, 60), maxWidth: 150 },
 			{ headerName: "pt時速", field: "point_per_hour", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
-			{ headerName: "平均周回時速", field: "round_per_hour", sortable: true, filter: false, maxWidth: 150 },
-			{ headerName: "pt/10分", field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
-			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
-			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
-			{ headerName: "休憩(min)", field: "rest", sortable: true, filter: false, maxWidth: 120 },
-			//{ headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
+			{ headerName: "周回時速", field: "round_per_hour", sortable: true, filter: false, maxWidth: 100 },
+			{ headerName: "pt/10分", field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 100 },
+			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 100 },
+			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 100 },
+      { headerName: "休憩(min)", field: "rest", sortable: true, filter: false, maxWidth: 100 },
+      //{ headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
+      { headerName: "有效場次/hr", field: "valid_round", sortable: true, filter: false, maxWidth: 120 },
+      { headerName: "瞬間時速", field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
+      //{ headerName: "吐槽", field: "comment", sortable: true, filter: false, maxWidth: 100 },
+  ]);
 
-	]);
+  function setDiffLastRoundCellStyle(params) {
+    // Do not render style for Rank 1st
+    if(params.node.data.rank === 1) // WTF am I doing??
+      return null;
+    let val = params.value;
+    if(val > 85) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#b7e1cd'}; // light green
+    }
+    else if(val > 30 && val <= 85) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#fce8b2'}; // light yellow
+    }
+    else if(val <= 30) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#f4c7c3'}; // light red
+    }
+    else return null;
+  }
+
+  // factor is minute
+  function setCatchTimeCellStyle(params, factor) {
+    // Do not render style for Rank 1st
+    if(params.node.data.rank === 1) // WTF am I doing??
+      return null;
+    let val = fromTimeStrToMin(params.value);
+    if(val > factor * 3) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#b7e1cd'}; // light green
+    }
+    else if(val > factor && val <= factor * 3) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#fce8b2'}; // light yellow
+    }
+    else if(val >= 0 && val <= factor) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#f4c7c3'}; // light red
+    }
+    else return null;
+  }
+  
+  function setPointCellStyle(params, factor) {
+    let val = params.value;
+    if(val >= factor * 5) {
+      return {color: 'black', fontWeight: 'bold', backgroundColor: 'red'};
+    }
+    else if(val >= factor * 3 && val < factor * 5) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#f4c7c3'}; // light red
+    }
+    else if(val >= factor && val < factor * 3) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#fce8b2'}; // light yellow
+    }
+    else if(val >= 0 && val < factor) {
+      return {color: 'black', fontWeight: 'normal', backgroundColor: '#b7e1cd'}; // light green
+    }
+    else return null;
+  }
+
+  function fromTimeStrToMin(time_str) {
+    let res = time_str.split(" 小時 ");
+    let hrs = parseInt(res[0]); // hrs
+    let min = parseInt(res[1]);
+    return (hrs * 60 + min);
+  }
 
 	function numberFormatter(params) {
 			// this puts commas into the number eg 1000 goes to 1,000,
@@ -63,19 +123,21 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 					introduction: top10[i].introduction,
 					userId: top10[i].userId,
 					point: top10[i].point,
-					userDeck: top10[i].userDeck,
+					userDeck: top10[i].userDeck, // deck of this top player.
 					bonus: 0, // need to implement
 					diff_1st: (i > 0 ? (top10[i].point - top10[0].point) : 0),
 					diff_last: (i > 0 ? (top10[i].point - top10[i - 1].point) : 0),
 					diff_last_round: (i > 0 ? Math.ceil((top10[i - 1].point - top10[i].point) / roundMaxPt)*-1 : 0),
 					catch_time: secondsToHrsAndMins(i > 0 ? Math.ceil((top10[i - 1].point - top10[i].point) / roundMaxPt * fastestRound) : 0),
-					point_per_hour: (top10[i].point / (eventProgressed / 3600)),
-					round_per_hour: (top10[i].point / (eventProgressed / 3600) / roundMaxPt).toFixed(3),
-					point_10mins: getPointDiffInPeriod(top10[i].userId, 10), // need to change
-					point_30mins: getPointDiffInPeriod(top10[i].userId, 30), // need to change
-					point_60mins: getPointDiffInPeriod(top10[i].userId, 60), // need to change
-					rest: 0,
-					playerId: top10[i].userId
+					point_per_hour: (top10[i].point / ((eventProgressed - maintainenceHr * 3600) > 0 ? (eventProgressed - maintainenceHr * 3600) / 3600 : (eventProgressed / 3600))),
+					round_per_hour: (top10[i].point / ((eventProgressed - maintainenceHr * 3600) > 0 ? (eventProgressed - maintainenceHr * 3600) / 3600 : (eventProgressed / 3600)) / roundMaxPt).toFixed(3),
+					point_10mins: getPointDiffInPeriod(top10[i].userId, 10),
+					point_30mins: getPointDiffInPeriod(top10[i].userId, 30),
+					point_60mins: getPointDiffInPeriod(top10[i].userId, 60),
+					rest: 0, // need to change
+          playerId: top10[i].userId,
+          valid_round: getActualRoundWithId(top10[i].userId),
+          speed_in_theory: (getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt).toFixed(2)
 				});
 			}
 		}
@@ -157,6 +219,12 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
       }
     }
     return res;
+  }
+
+  function getActualRoundWithId(userId) {
+    let res = [];
+    res = getSpecificIdRecord(rowRecord, userId);
+    return new Set(res).size - 1;
   }
   
   function getPointDiffInPeriod(userId, minutes) {

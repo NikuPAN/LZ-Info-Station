@@ -21,14 +21,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 // //import InputAdornment from "@material-ui/core/InputAdornment";
 
-export default function EventDetail({eventTitle, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound}) {
+export default function EventDetail({eventTitle, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
 
 	const [eventDetail, setEventDetail] = useState({
 		eventTitle, 
 		eventStartTimestamp, 
 		eventDuration, 
 		roundMaxPt, 
-		fastestRound
+		fastestRound,
+		maintainenceHr
 	});
 	// const [event_Title, setEventTitle] = useState(eventTitle);
 	// const [eventStartTS, setEventStartTS] = useState(eventStartTimestamp);
@@ -41,6 +42,7 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 	var eventDur = eventDuration;
 	var roundMaxPoint = roundMaxPt;
 	var fastestRd = fastestRound;
+	var maintainHr = maintainenceHr;
 
 	// This function is use to update parent component
 	function onEventDetailChange(event) {
@@ -77,6 +79,10 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 		fastestRd = parseInt(event.target.value);
 	}
 
+	function onMaintainHrChange(event) {
+		maintainHr = parseFloat(event.target.value);
+	}
+
 	function convertTSForDatePicker(timestamp) {
 		var dt = new Date(timestamp * 1000);
 		var yy = dt.getFullYear();
@@ -85,7 +91,7 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 		var hh = dt.getHours();
 		var min = dt.getMinutes();
 		var result = (yy+'-'+(mm<10?'0'+mm:mm)+'-'+(dd<10?'0'+dd:dd)+'T'+(hh<10?'0'+hh:hh)+':'+(min<10?'0'+min:min));
-		console.log(result);
+		//console.log(result);
 		return result;
 	}
 
@@ -190,6 +196,19 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 							inputProps={{ min: "1", max: "300", step: "1" }}
 							defaultValue={parseInt(fastestRd)}
 							onChange={onFastestRoundChange}
+						/>
+					</FormControl>
+					<FormControl fullWidth className={classes.margin}>
+						<TextField
+							id="maintain-hours"
+							label="維修補正"		
+							type="number"
+							InputLabelProps={{
+								shrink: true,
+							}}
+							inputProps={{ min: "0", max: "500", step: "0.01" }}
+							defaultValue={parseFloat(maintainHr)}
+							onChange={onMaintainHrChange}
 						/>
 					</FormControl>
 				</ExpansionPanelDetails>

@@ -16,7 +16,8 @@ class Ranking extends Component {
       eventStartTime: "15:00",
       eventDurationHr: 198,
       roundMaxPoint: 22830,
-      fastestRoundSec: 125
+      fastestRoundSec: 125,
+      maintainenceHr: 6.03
     };
   }
 
@@ -61,6 +62,7 @@ class Ranking extends Component {
               eventDuration={this.state.eventDurationHr}
               roundMaxPt={this.state.roundMaxPoint}
               fastestRound={this.state.fastestRoundSec}
+              maintainenceHr={this.state.maintainenceHr}
             />
             <div class="editmenu">
               <EventDetail 
@@ -69,6 +71,7 @@ class Ranking extends Component {
                 eventDuration={this.state.eventDurationHr}
                 roundMaxPt={this.state.roundMaxPoint}
                 fastestRound={this.state.fastestRoundSec}
+                maintainenceHr={this.state.maintainenceHr}
               />
             </div>
           </div>
