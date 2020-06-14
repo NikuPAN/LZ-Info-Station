@@ -7,6 +7,7 @@ import Joke from "./Joke";
 import AboutLZ from "./AboutLZ";
 import Recommend from "./Recommend";
 import Login from "./Login";
+import UserStore from "../stores/UserStore";
  
 class Main extends Component {
   render() {
@@ -21,7 +22,14 @@ class Main extends Component {
             <li><NavLink to="/jokes">梗/梗圖/SY</NavLink></li>
             <li><NavLink to="/aboutlz">關於LZ</NavLink></li>
             <li><NavLink to="/recommend">系統建議</NavLink></li>
-            <li><NavLink to="/login">登入</NavLink></li>
+            {(!UserStore.isLoggedIn || UserStore.username === '') ? (
+              <li><NavLink to="/login">登入</NavLink></li>
+            ) : (
+              <li>觀迎 {UserStore.username} </li>
+            )}
+            {(UserStore.isLoggedIn && UserStore.username !== '') ? (
+              <li onClick={() => UserStore.doLogout()}>登出</li>) : ( null )
+            }
           </ul>
           <div className="content">
             <Route exact path="/" component={Home}/>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import TextField from "@material-ui/core/TextField";
+import React, { useState } from "react";
 import { Button } from 'reactstrap';
+import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -16,9 +16,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 // 	KeyboardTimePicker,
 //   KeyboardDatePicker,
 // } from '@material-ui/pickers';
-// import FormControl from '@material-ui/core/FormControl';
-// import InputLabel from '@material-ui/core/InputLabel';
-// import Input from '@material-ui/core/Input';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
 // //import InputAdornment from "@material-ui/core/InputAdornment";
 
 export default function EventDetail({eventTitle, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound}) {
@@ -91,7 +91,7 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 
 	const useStyles = makeStyles(theme => ({
 		root: {
-			width: "40%",
+			width: "calc(240px + 30%)",
 			alignItems: 'right'
 		},
 		heading: {
@@ -110,7 +110,7 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 			alignItems: "center"
 		},
 		column: {
-			flexBasis: "40%"
+			flexBasis: "100%"
 		},
 		smallcol: {
 			flexBasis: "20%"
@@ -143,19 +143,17 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 				</ExpansionPanelSummary>
 
 				<ExpansionPanelDetails>
-					<div className={classes.column}>
-						<TextField
+					<FormControl fullWidth className={classes.margin}>
+						<InputLabel htmlFor="event-title">活動標題</InputLabel>
+						<Input
 							id="event-title"
-							label="活動標題"
-							InputLabelProps={{
-								shrink: true,
-							}}
 							defaultValue={event_Title}
 							onChange={onEventTitleChange}
 						/>
-						</div>
-					<Divider/>
-					<div className={classes.smallcol}>
+        	</FormControl>
+				</ExpansionPanelDetails>
+				<ExpansionPanelDetails>
+					<FormControl fullWidth className={classes.margin}>
 						<TextField
 							id="event-duration"
 							label="活動時長"		
@@ -167,9 +165,9 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 							defaultValue={parseInt(eventDur)}
 							onChange={onEventDurationChange}
 						/>
-					</div>
-					<div className={classes.smallcol}>
-					<TextField
+					</FormControl>
+					<FormControl fullWidth className={classes.margin}>
+						<TextField
 							id="round-max-pt"
 							label="周回理論PT"		
 							type="number"
@@ -180,8 +178,8 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 							defaultValue={parseInt(roundMaxPoint)}
 							onChange={onRoundMaxPointChange}
 						/>
-					</div>
-					<div className={classes.smallcol}>
+					</FormControl>
+					<FormControl fullWidth className={classes.margin}>
 						<TextField
 							id="fastest-round"
 							label="周回秒數"		
@@ -193,22 +191,24 @@ export default function EventDetail({eventTitle, eventStartTimestamp, eventDurat
 							defaultValue={parseInt(fastestRd)}
 							onChange={onFastestRoundChange}
 						/>
-					</div>
-					<Divider />
-					<div className={classes.midcol}>
-						<TextField
-							id="event-start-date-time"
-							label="活動開始日時"
-							type="datetime-local"
-							//defaultValue={new Date(eventStartTS*1000)}
-							defaultValue={convertTSForDatePicker(eventStartTS)}
-							onChange={onEventStartTSChange}
-							className={classes.textField}
-							InputLabelProps={{
-								shrink: true,
-							}}
-						/>
-					</div>
+					</FormControl>
+				</ExpansionPanelDetails>
+				<ExpansionPanelDetails>
+					<FormControl fullWidth className={classes.margin}>
+						{/* <div className={classes.midcol}> */}
+							<TextField
+								id="event-start-date-time"
+								label="活動開始日時"
+								type="datetime-local"
+								defaultValue={convertTSForDatePicker(eventStartTS)}
+								onChange={onEventStartTSChange}
+								className={classes.textField}
+								InputLabelProps={{
+									shrink: true,
+								}}
+							/>
+						{/* </div> */}
+					</FormControl>
 				</ExpansionPanelDetails>
 				<Divider />
 					<div className={classes.smallcol}>

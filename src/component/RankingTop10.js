@@ -3,10 +3,12 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import UserStore from "../stores/UserStore";
 
 export default function RankingTop10({eventStartTimestamp, eventDuration, roundMaxPt, fastestRound}) {
 
 	const [rawData, setRawData] = useState([]);
+	const [rowRecord, setRowRecord] = useState([[]]);
 	//const [rowData, setRowData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
 
@@ -36,7 +38,8 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
 			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
 			{ headerName: "休憩(min)", field: "rest", sortable: true, filter: false, maxWidth: 120 },
-			//{ headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 }
+			//{ headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
+
 	]);
 
 	function numberFormatter(params) {
@@ -67,10 +70,10 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 					diff_last_round: (i > 0 ? Math.ceil((top10[i - 1].point - top10[i].point) / roundMaxPt)*-1 : 0),
 					catch_time: secondsToHrsAndMins(i > 0 ? Math.ceil((top10[i - 1].point - top10[i].point) / roundMaxPt * fastestRound) : 0),
 					point_per_hour: (top10[i].point / (eventProgressed / 3600)),
-					round_per_hour: (top10[i].point / (eventProgressed / 3600) / roundMaxPt).toFixed(3), // need to change
-					point_10mins: 0, // need to change
-					point_30mins: 0, // need to change
-					point_60mins: 0, // need to change
+					round_per_hour: (top10[i].point / (eventProgressed / 3600) / roundMaxPt).toFixed(3),
+					point_10mins: getPointDiffInPeriod(top10[i].userId, 10), // need to change
+					point_30mins: getPointDiffInPeriod(top10[i].userId, 30), // need to change
+					point_60mins: getPointDiffInPeriod(top10[i].userId, 60), // need to change
 					rest: 0,
 					playerId: top10[i].userId
 				});
@@ -129,23 +132,80 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 	// 	trackingIDs[id].id = parseInt(event.target.value);
 	// }
 
+	async function getAllRecord() {
+		let response = await fetch("https://cronpublic.yasushi.me/record.json");
+		let data = await response.json();
+		// console.log(data);
+		return data;
+	}
+
 	async function getAllData() {
 		let response = await fetch("https://cronpublic.yasushi.me/ranking.json");
 		let data = await response.json();
 		//console.log(data);
 		return data;
-	}
+  }
+
+  function getSpecificIdRecord(array, userId) {
+    let res = [];
+    if(!array || array.length === 0)
+      return null;
+    for(var i = 0; i < array.length; i++) {
+      for(var j = 0; j < array[i].length; j++) {
+        if(array[i][j].userId === userId) 
+          res.push(array[i][j].point);
+      }
+    }
+    return res;
+  }
+  
+  function getPointDiffInPeriod(userId, minutes) {
+    let res = 0, latest_pt = 0, past_target_pt = 0, rec = [];
+    // Unable to get difference more than 60 minutes.
+    if(minutes > rowRecord.length)
+      return 0;
+    /** Fix calculation */
+    rec = getSpecificIdRecord(rowRecord, userId);
+    if(rec != null) {
+      // Latest point of this userId
+      latest_pt = rec[0];
+      // To prevent get exceeded index from this array.
+      if(minutes > rec.length-1) {
+        past_target_pt = rec[rec.length - 1];
+      } 
+      else {
+        past_target_pt = rec[minutes];
+      }
+      res = latest_pt - past_target_pt;
+    }
+    return res;
+  }
 
 	function updateAllData() {
 		// This is an async function.
 		getAllData()
 		.then(res => {
 			return {
-					lastModified: res.lastModified,
-					topUsers: res.topUsers
+				lastModified: res.lastModified,
+				topUsers: res.topUsers
 			};
 		})
-		.then(ranks => setRawData(ranks));
+    .then(ranks => setRawData(ranks));
+    
+    // This is an async function.
+    // DLLM都唔知寫左乜春。
+		getAllRecord()
+		.then(res =>
+			res.map(item => {
+        return item.map(top => {
+          return {
+            userId: top.userId,
+            point: top.point
+          };
+        })
+			}) 
+		)
+		.then(records => setRowRecord(records));
 	}
 	
   useEffect(() => {
@@ -156,7 +216,9 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-	}, []);
+  }, []);
+  
+  //console.log(rowRecord);
 
 	return (
 		<div>
@@ -187,33 +249,33 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 			</div>
 			{/* <div>
 				<h6>
-         <form>
-					 <tr>
-						 <td>ID</td>
-						 <td>顯示文字</td>
-					 </tr>
-					 <tr>
-						 <td><input id="trackID1" name="trackID1" type="number" onChange={updateTrackingID(0)} /></td>
-						 <td><input id="trackName1" name="trackName1" onChange={updateTrackingID(0)} /></td>
-					 </tr>
-					 <tr>
-						 <td><input id="trackID2" name="trackID2" type="number" onChange={updateTrackingID(1)} /></td>
-						 <td><input id="trackName2" name="trackName2" onChange={updateTrackingID(1)} /></td>
-					 </tr>
-					 <tr>
-						 <td><input id="trackID3" name="trackID3" type="number" onChange={updateTrackingID(2)} /></td>
-						 <td><input id="trackName3" name="trackName3" onChange={updateTrackingID(2)} /></td>
-					 </tr>
-					 <tr>
-						 <td><input id="trackID4" name="trackID4" type="number" onChange={updateTrackingID(3)} /></td>
-						 <td><input id="trackName4" name="trackName4" onChange={updateTrackingID(3)} /></td>
-					 </tr>
-					 <tr>
-						 <td><input id="trackID5" name="trackID5" type="number" onChange={updateTrackingID(4)} /></td>
-						 <td><input id="trackName5" name="trackName5" onChange={updateTrackingID(4)} /></td>
-					 </tr>
-				 </form>
-				 </h6>
+				<form>
+					<tr>
+						<td>ID</td>
+						<td>顯示文字</td>
+					</tr>
+					<tr>
+						<td><input id="trackID1" name="trackID1" type="number" onChange={updateTrackingID(0)} /></td>
+						<td><input id="trackName1" name="trackName1" onChange={updateTrackingID(0)} /></td>
+					</tr>
+					<tr>
+						<td><input id="trackID2" name="trackID2" type="number" onChange={updateTrackingID(1)} /></td>
+						<td><input id="trackName2" name="trackName2" onChange={updateTrackingID(1)} /></td>
+					</tr>
+					<tr>
+						<td><input id="trackID3" name="trackID3" type="number" onChange={updateTrackingID(2)} /></td>
+						<td><input id="trackName3" name="trackName3" onChange={updateTrackingID(2)} /></td>
+					</tr>
+					<tr>
+						<td><input id="trackID4" name="trackID4" type="number" onChange={updateTrackingID(3)} /></td>
+						<td><input id="trackName4" name="trackName4" onChange={updateTrackingID(3)} /></td>
+					</tr>
+					<tr>
+						<td><input id="trackID5" name="trackID5" type="number" onChange={updateTrackingID(4)} /></td>
+						<td><input id="trackName5" name="trackName5" onChange={updateTrackingID(4)} /></td>
+					</tr>
+				</form>
+				</h6>
 			</div> */}
 		</div>
 	);
