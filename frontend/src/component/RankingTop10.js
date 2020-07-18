@@ -13,8 +13,9 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 
 	// var gridData = [];
 	var formattedTimestamp = timestampToDateTime(rawData.lastModified);
+	// var formattedTimestamp = new Date(rawData.lastModified * 1000).toLocaleString("en-US");
 	var eventProgressed = getTimeDifference(rawData.lastModified, eventStartTimestamp);
-		// var trackingIDs = [
+	// var trackingIDs = [
 	// 	{ id: 0, name: null },
 	// 	{ id: 0, name: null },
 	// 	{ id: 0, name: null },
@@ -48,14 +49,14 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
     if(params.node.data.rank === 1) // WTF am I doing??
       return null;
     let val = params.value;
-    if(val > 85) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#b7e1cd'}; // light green
+    if(val < -85) {
+      return {color: '#99cc33', fontWeight: 'bold' /*, backgroundColor: '#b7e1cd'*/ }; // light green
     }
-    else if(val > 30 && val <= 85) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#fce8b2'}; // light yellow
+    else if(val <- 30 && val >= -85) {
+      return {color: '#ffcc00', fontWeight: 'bold'/*, backgroundColor: '#fce8b2'*/ }; // light yellow
     }
-    else if(val <= 30) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#f4c7c3'}; // light red
+    else if(val >= -30) {
+      return {color: '#ff9966', fontWeight: 'bold'/*, backgroundColor: '#f4c7c3'*/ }; // light red
     }
     else return null;
   }
@@ -67,13 +68,13 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
       return null;
     let val = fromTimeStrToMin(params.value);
     if(val > factor * 3) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#b7e1cd'}; // light green
+      return {color: '#99cc33', fontWeight: 'bold' /*, backgroundColor: '#b7e1cd'*/}; // light green
     }
     else if(val > factor && val <= factor * 3) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#fce8b2'}; // light yellow
+      return {color: '#ffcc00', fontWeight: 'bold' /*, backgroundColor: '#fce8b2'*/}; // light yellow
     }
     else if(val >= 0 && val <= factor) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#f4c7c3'}; // light red
+      return {color: '#ff9966', fontWeight: 'bold' /*, backgroundColor: '#f4c7c3'*/}; // light red
     }
     else return null;
   }
@@ -81,16 +82,16 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
   function setPointCellStyle(params, factor) {
     let val = params.value;
     if(val >= factor * 5) {
-      return {color: 'black', fontWeight: 'bold', backgroundColor: 'red'};
+      return {color: 'red', fontWeight: 'bold' /*, backgroundColor: 'red'*/};
     }
     else if(val >= factor * 3 && val < factor * 5) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#f4c7c3'}; // light red
+      return {color: '#ff9966', fontWeight: 'bold' /*, backgroundColor: '#f4c7c3'*/}; // light red
     }
     else if(val >= factor && val < factor * 3) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#fce8b2'}; // light yellow
+      return {color: '#ffcc00', fontWeight: 'bold' /*, backgroundColor: '#fce8b2'*/}; // light yellow
     }
     else if(val >= 0 && val < factor) {
-      return {color: 'black', fontWeight: 'normal', backgroundColor: '#b7e1cd'}; // light green
+      return {color: '#99cc33', fontWeight: 'bold' /*, backgroundColor: '#b7e1cd'*/}; // light green
     }
     else return null;
   }
@@ -158,11 +159,12 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 
 	function getTimeDifference(timestamp1, timestamp2) {
 		var result = 0;
-		if(timestamp1 > timestamp2) {
+		if(timestamp1 >= timestamp2) {
 			result = timestamp1 - timestamp2;
-		} else {
-			result = timestamp2 - timestamp1
-		}
+		} 
+		// else {
+		// 	result = timestamp2 - timestamp1
+		// }
 		return result;
 	}
 
@@ -230,23 +232,26 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
   function getPointDiffInPeriod(userId, minutes) {
     let res = 0, latest_pt = 0, past_target_pt = 0, rec = [];
     // Unable to get difference more than 60 minutes.
-    if(minutes > rowRecord.length)
-      return 0;
-    /** Fix calculation */
-    rec = getSpecificIdRecord(rowRecord, userId);
-    if(rec != null) {
-      // Latest point of this userId
-      latest_pt = rec[0];
-      // To prevent get exceeded index from this array.
-      if(minutes > rec.length-1) {
-        past_target_pt = rec[rec.length - 1];
-      } 
-      else {
-        past_target_pt = rec[minutes];
+    if(minutes > rowRecord.length && minutes > 60) {
+		  return res;
+	  } 
+	  else {
+      /** Fix calculation */
+      rec = getSpecificIdRecord(rowRecord, userId);
+      if(rec != null) {
+        // Latest point of this userId
+        latest_pt = rec[0];
+        // To prevent get exceeded index from this array.
+        if(minutes > rec.length-1) {
+          past_target_pt = rec[rec.length - 1];
+        } 
+        else {
+          past_target_pt = rec[minutes];
+        }
+        res = latest_pt - past_target_pt;
       }
-      res = latest_pt - past_target_pt;
-    }
-    return res;
+      return res;
+	  }
   }
 
 	function updateAllData() {

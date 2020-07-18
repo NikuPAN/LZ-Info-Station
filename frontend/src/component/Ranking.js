@@ -11,13 +11,13 @@ class Ranking extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      eventTitle: "RAISE A SUILEN～御簾を上げろ～（前編）",
-      eventStartDate: "2020-6-10",
+      eventTitle: "とあるバンドのスポーツフェスティバル☆",
+      eventStartDate: "2020-6-30",
       eventStartTime: "15:00",
-      eventDurationHr: 198,
-      roundMaxPoint: 22830,
+      eventDurationHr: 222,
+      roundMaxPoint: 12750,
       fastestRoundSec: 125,
-      maintainenceHr: 6.03
+      maintainenceHr: 0.00
     };
   }
 
