@@ -10,6 +10,7 @@ class Router {
         this.login(app, db);
         this.logout(app, db);
         this.isLoggedIn(app, db);
+        this.updateEventDetail(app, db);
     }
 
     login(app, db) {
@@ -25,6 +26,10 @@ class Router {
                     success: false,
                     msg: '使用者名稱或密碼不應長於24字符！'
                 })
+                return;
+
+                let cols = [username];
+                db.query('SE');
             }
         });
 
@@ -37,6 +42,8 @@ class Router {
     isLoggedIn(app, db) {
 
     }
+
+    
 
 }
 
