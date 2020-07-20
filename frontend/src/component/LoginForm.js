@@ -12,6 +12,7 @@ import Button from '@material-ui/core/Button';
 // import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import UserStore from '../stores/UserStore';
+//import { useHistory } from 'react-router-dom';
  
 class LoginForm extends Component {
 
@@ -23,6 +24,7 @@ class LoginForm extends Component {
       username: '',
       loginDisabled: false,
       resetDisabled: true,
+      //history: useHistory(),
       useStyles: makeStyles((theme) => ({
         root: {
           display: 'flex',
@@ -121,6 +123,9 @@ class LoginForm extends Component {
         UserStore.isLoggedIn = true;
         UserStore.username = result.username;
         UserStore.userlevel = result.userlevel;
+        // this.setState({
+        //   history: history.push('/ranking')
+        // });
       }
       else if(result && result.success === false) {
         this.resetForm();

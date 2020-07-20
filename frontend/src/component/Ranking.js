@@ -21,6 +21,34 @@ class Ranking extends Component {
     };
   }
 
+  async componentDidMount() {
+    try {
+      let res = await fetch('/isLoggedIn', {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      let result = res.json(); // await needed?
+      if(result && result.success) {
+        UserStore.loading = false;
+        UserStore.isLoggedIn = true;
+        UserStore.username = result.username;
+      }
+      else {
+        UserStore.loading = false;
+        UserStore.isLoggedIn = false;
+      }
+
+    }
+    catch(e) {
+      UserStore.loading = false;
+      UserStore.isLoggedIn = false;
+    }
+  }
+
   //Strings to their exact timestamp in seconds
   dayTimeToTimestamp(date, time) {
     var res = [], res2 = [];
@@ -47,7 +75,8 @@ class Ranking extends Component {
   render() {
     return (
       <div>
-        {(!UserStore.isLoggedIn) ? (
+        {console.log("logged in?: ", UserStore.isLoggedIn)}
+        {(UserStore.isLoggedIn) ? (
           <div>
             <h2>TOP 10 - <b>{this.state.eventTitle}</b></h2>
             <h4>
@@ -64,6 +93,7 @@ class Ranking extends Component {
               fastestRound={this.state.fastestRoundSec}
               maintainenceHr={this.state.maintainenceHr}
             />
+            {(UserStore.userlevel >= 2) ? (
             <div class="editmenu">
               <EventDetail 
                 eventTitle={this.state.eventTitle}
@@ -73,7 +103,9 @@ class Ranking extends Component {
                 fastestRound={this.state.fastestRoundSec}
                 maintainenceHr={this.state.maintainenceHr}
               />
-            </div>
+            </div>) : (
+              null
+            )}
           </div>
         ) : (
           <div>

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { observer } from 'mobx-react';
 import UserStore from "../stores/UserStore";
 import LoginForm from "./LoginForm";
  
@@ -64,6 +63,7 @@ class Login extends Component {
       if(result && result.success) {
         UserStore.isLoggedIn = false;
         UserStore.username = '';
+        UserStore.userlevel = -1;
       }
 
     }
@@ -72,34 +72,32 @@ class Login extends Component {
       console.log(e);
     }
   }
-  
 
   render() {
-    if(!UserStore.isLoggedIn) {
-      return (
-        <div>
-          <h2>登入進行管理</h2>
+    return (
+      <div>
+        {(UserStore.isLoggedIn) ? (
           <div>
-              <LoginForm />
+            <h1>
+              你已經登入了，{UserStore.userlevel} 級使用者 {UserStore.username}！
+            </h1>
+            <div className={this.state.classes.root}>
+              <Button variant="contained" color="secondary" onClick={() => this.doLogout()}>
+                登出
+              </Button>
+            </div>
           </div>
-        </div>
-      );
-    }
-    else {
-      return (
-        <div>
-          <h1>
-            你已經登入了，還想再登入一次嗎:)?
-          </h1>
-          <div className={this.state.classes.root}>
-            <Button variant="contained" color="secondary" onClick={() => this.doLogout()}>
-              登出
-            </Button>
+        ) : (
+          <div>
+            <h2>登入進行管理 {UserStore.isLoggedIn}</h2>
+            <div>
+                <LoginForm />
+            </div>
           </div>
-        </div>
-      );
-    }
+        )}
+      </div>
+    );
   }
 }
 
-export default observer(Login);
+export default Login;

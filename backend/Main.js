@@ -23,7 +23,7 @@ db.connect(function(err) {
     if(err) {
         console.log('Error Establishing Connection to DB');
         throw err;
-        return false;
+        //return false;
     }
 });
 
