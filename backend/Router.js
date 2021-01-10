@@ -42,7 +42,7 @@ class Router {
                 // If such userdata exists.
                 if(data && data.length === 1) {
                     bcrypt.compare(password, data[0].password, (bcryptErr, verified) => {
-                        console.log(bcrypt.hashSync(password, 12), data[0].password);
+                        //console.log(bcrypt.hashSync(password, 12), data[0].password);
                         if(verified) {
                             req.session.userID = data[0].id;
                             res.json({

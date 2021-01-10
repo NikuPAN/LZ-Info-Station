@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 // import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -11,8 +11,10 @@ import Button from '@material-ui/core/Button';
 // import Visibility from '@material-ui/icons/Visibility';
 // import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
-import UserStore from '../stores/UserStore';
-//import { useHistory } from 'react-router-dom';
+// import UserStore from '../stores/UserStore';
+import store from '../store';
+import * as acts from '../actions/index';
+
  
 class LoginForm extends Component {
 
@@ -22,9 +24,9 @@ class LoginForm extends Component {
       showPassword: false,
       password: '',
       username: '',
+      errorMsg: '',
       loginDisabled: false,
       resetDisabled: true,
-      //history: useHistory(),
       useStyles: makeStyles((theme) => ({
         root: {
           display: 'flex',
@@ -120,22 +122,26 @@ class LoginForm extends Component {
 
       let result = await res.json();
       if(result && result.success) {
-        UserStore.isLoggedIn = true;
-        UserStore.username = result.username;
-        UserStore.userlevel = result.userlevel;
-        // this.setState({
-        //   history: history.push('/ranking')
-        // });
+        store.dispatch(acts.login(result.username, result.userlevel));
+        this.setState({
+          errorMsg: ''
+        });
       }
       else if(result && result.success === false) {
         this.resetForm();
-        alert(result.msg);
+        // alert(result.msg);
+        this.setState({
+          errorMsg: result.msg
+        });
       }
 
     }
     catch(e) {
       console.log(e);
       this.resetForm();
+      this.setState({
+        errorMsg: ''
+      });
     }
   }
 
@@ -166,6 +172,9 @@ class LoginForm extends Component {
                   onChange={this.onPasswordFieldChange} 
                 />
               </td>
+            </tr>
+            <tr>
+              <h6>{this.state.errorMsg}</h6>
             </tr>
             <tr>
               {/* <td></td> */}

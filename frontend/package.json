@@ -14,15 +14,15 @@
     "ag-grid-react": "^23.2.0",
     "clsx": "^1.1.1",
     "date-fns": "^2.14.0",
-    "mobx": "^5.15.4",
-    "mobx-react": "^6.2.2",
     "ngrok": "^3.2.7",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
+    "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
-    "reactstrap": "^8.4.1"
+    "reactstrap": "^8.4.1",
+    "redux": "^4.0.5"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,11 +1,8 @@
-import React, { Component } from "react";
-// import { AgGridReact } from "ag-grid-react";
-// import "ag-grid-community/dist/styles/ag-grid.css";
-// import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
-
-import RankingTop10 from "./RankingTop10";
-import EventDetail from "./EventDetail";
-import UserStore from "../stores/UserStore";
+import React, { Component } from 'react';
+import RankingTop10 from './RankingTop10';
+import EventDetail from './EventDetail';
+import store from '../store';
+import * as manager from './Manager';
  
 class Ranking extends Component {
   constructor(props) {
@@ -22,31 +19,7 @@ class Ranking extends Component {
   }
 
   async componentDidMount() {
-    try {
-      let res = await fetch('/isLoggedIn', {
-        method: 'post',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      let result = res.json(); // await needed?
-      if(result && result.success) {
-        UserStore.loading = false;
-        UserStore.isLoggedIn = true;
-        UserStore.username = result.username;
-      }
-      else {
-        UserStore.loading = false;
-        UserStore.isLoggedIn = false;
-      }
-
-    }
-    catch(e) {
-      UserStore.loading = false;
-      UserStore.isLoggedIn = false;
-    }
+    manager.isLoggedIn();
   }
 
   //Strings to their exact timestamp in seconds
@@ -75,8 +48,7 @@ class Ranking extends Component {
   render() {
     return (
       <div>
-        {console.log("logged in?: ", UserStore.isLoggedIn)}
-        {(UserStore.isLoggedIn) ? (
+        {(!store.getState().isLoggedIn) ? (
           <div>
             <h2>TOP 10 - <b>{this.state.eventTitle}</b></h2>
             <h4>
@@ -93,7 +65,7 @@ class Ranking extends Component {
               fastestRound={this.state.fastestRoundSec}
               maintainenceHr={this.state.maintainenceHr}
             />
-            {(UserStore.userlevel >= 2) ? (
+            {(store.getState().userlevel >= 2) ? (
             <div class="editmenu">
               <EventDetail 
                 eventTitle={this.state.eventTitle}
