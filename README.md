@@ -1,6 +1,6 @@
 # LZ-Info-Station
-Louder Zone multi-functional information station
-This system is built for LZ only, not entirely for public.
+Louder Zone multi-functional information station.
+This system is built exclusively for LZ only, not entirely for public.
 
 Included Functions:
 
