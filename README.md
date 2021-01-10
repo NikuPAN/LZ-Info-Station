@@ -7,7 +7,7 @@ Included Functions:
 1.  Welcome Page
 2.  Top10 / "Stock" Page
 3.  Recommendations for you to get in Top10 easier by Top10 experienced runners.
-4.  Hentai speaks.
+4.  Trash talks.
 5.  About LZ.
 6.  System functions recommendations.
 7.  Login Page
