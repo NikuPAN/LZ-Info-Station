@@ -4,24 +4,13 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
-export default function RankingTop10({eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
+export default function RankingTop10({data, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
 
-	const [rawData, setRawData] = useState([]);
 	const [rowRecord, setRowRecord] = useState([[]]);
-	//const [rowData, setRowData] = useState([]);
 	const [gridApi, setGridApi] = useState(null);
 
-	// var gridData = [];
-	var formattedTimestamp = timestampToDateTime(rawData.lastModified);
-	// var formattedTimestamp = new Date(rawData.lastModified * 1000).toLocaleString("en-US");
-	var eventProgressed = getTimeDifference(rawData.lastModified, eventStartTimestamp);
-	// var trackingIDs = [
-	// 	{ id: 0, name: null },
-	// 	{ id: 0, name: null },
-	// 	{ id: 0, name: null },
-	// 	{ id: 0, name: null },
-	// 	{ id: 0, name: null }
-	// ];
+	var formattedTimestamp = timestampToDateTime(data.lastModified);
+	var eventProgressed = getTimeDifference(data.lastModified, eventStartTimestamp);
 
 	const [columnDefs, setColumnDefs] = useState([
 			{ headerName: "Top", field: "rank", sortable: true, filter: "agNumberColumnFilter", maxWidth: 80 },
@@ -110,12 +99,9 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 	}
 
 	function getTop10Data(data) {
-		//console.log("getTop10 called");
-		//console.log(data);
 		let result = [];
 		if(data.topUsers) {
 			let top10 = data.topUsers;
-			//console.log(top10.length);
 			for (var i = 0; i < top10.length; i++) {
 				result.push({
 					rank: top10[i].rank,
@@ -161,10 +147,7 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 		var result = 0;
 		if(timestamp1 >= timestamp2) {
 			result = timestamp1 - timestamp2;
-		} 
-		// else {
-		// 	result = timestamp2 - timestamp1
-		// }
+		}
 		return result;
 	}
 
@@ -177,24 +160,7 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 
   function onGridReady(params) {
 		setGridApi(params.api);
-		// params.api.sizeColumnsToFit();
-
-		// var columnAPI = params.columnApi;
-		// var allColumnIds = [];
-    // columnAPI.getAllColumns().forEach(function(column) {
-    //   allColumnIds.push(column.colId);
-    // });
-    // columnAPI.autoSizeColumns(allColumnIds, false);
 	}
-
-	// // not yet implemented
-	// function updateTrackingID(event, id) {
-	// 	var val = event.target.value;
-	// 	if(isNaN(val)) {
-
-	// 	}
-	// 	trackingIDs[id].id = parseInt(event.target.value);
-	// }
 
 	async function getAllRecord() {
 		let response = await fetch("https://cronpublic.yasushi.me/record.json");
@@ -202,13 +168,6 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 		// console.log(data);
 		return data;
 	}
-
-	async function getAllData() {
-		let response = await fetch("https://cronpublic.yasushi.me/ranking.json");
-		let data = await response.json();
-		//console.log(data);
-		return data;
-  }
 
   function getSpecificIdRecord(array, userId) {
     let res = [];
@@ -255,18 +214,7 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
   }
 
 	function updateAllData() {
-		// This is an async function.
-		getAllData()
-		.then(res => {
-			return {
-				lastModified: res.lastModified,
-				topUsers: res.topUsers
-			};
-		})
-    .then(ranks => setRawData(ranks));
-    
-    // This is an async function.
-    // DLLM都唔知寫左乜春。
+    // This is an async function
 		getAllRecord()
 		.then(res =>
 			res.map(item => {
@@ -298,18 +246,25 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 			<div>
 				{/* <h4>最終更新日時: {formattedTimestamp}</h4> */}
 				{/* <h5>dump: {eventStartTimestamp}, {eventDuration}, {roundMaxPt}, {fastestRound} </h5> */}
-				<h5>活動進度: {secondsToHrsAndMins(eventProgressed)} (剩餘: {secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)})
+				<h5>
+					活動進度: {secondsToHrsAndMins(eventProgressed)} (剩餘: {secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)})
 				</h5>
 			</div>
 			<div>
-				<ProgressBar animated now={95} />
+				<ProgressBar 
+					variant="custom" 
+					animated 
+					now={((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0)} 
+					label={`${((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0).toFixed(2)}%`}
+					style={{ backgroundColor: 'inherit' }} 
+				/>
 			</div>
-			<div class="container">
+			<div className="grid">
 				<div id="myGrid" className="ag-theme-alpine-dark" 
 				style={{ height: "500px", width: "95%" }}>
 					<AgGridReact
 						columnDefs={columnDefs}
-						rowData={getTop10Data(rawData)}
+						rowData={getTop10Data(data)}
 						onGridReady={onGridReady}
 						// onRowClicked={}
 						// pagination={true}
@@ -320,36 +275,6 @@ export default function RankingTop10({eventStartTimestamp, eventDuration, roundM
 			<div>
 				<h5>最終更新日時: {formattedTimestamp}</h5>
 			</div>
-			{/* <div>
-				<h6>
-				<form>
-					<tr>
-						<td>ID</td>
-						<td>顯示文字</td>
-					</tr>
-					<tr>
-						<td><input id="trackID1" name="trackID1" type="number" onChange={updateTrackingID(0)} /></td>
-						<td><input id="trackName1" name="trackName1" onChange={updateTrackingID(0)} /></td>
-					</tr>
-					<tr>
-						<td><input id="trackID2" name="trackID2" type="number" onChange={updateTrackingID(1)} /></td>
-						<td><input id="trackName2" name="trackName2" onChange={updateTrackingID(1)} /></td>
-					</tr>
-					<tr>
-						<td><input id="trackID3" name="trackID3" type="number" onChange={updateTrackingID(2)} /></td>
-						<td><input id="trackName3" name="trackName3" onChange={updateTrackingID(2)} /></td>
-					</tr>
-					<tr>
-						<td><input id="trackID4" name="trackID4" type="number" onChange={updateTrackingID(3)} /></td>
-						<td><input id="trackName4" name="trackName4" onChange={updateTrackingID(3)} /></td>
-					</tr>
-					<tr>
-						<td><input id="trackID5" name="trackID5" type="number" onChange={updateTrackingID(4)} /></td>
-						<td><input id="trackName5" name="trackName5" onChange={updateTrackingID(4)} /></td>
-					</tr>
-				</form>
-				</h6>
-			</div> */}
 		</div>
 	);
 }

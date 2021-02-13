@@ -134,7 +134,6 @@ class LoginForm extends Component {
           errorMsg: result.msg
         });
       }
-
     }
     catch(e) {
       console.log(e);

@@ -2,9 +2,9 @@
 import store from '../store';
 import * as acts from '../actions/index';
 
-export const isLoggedIn = async() => {
+export const isLoggedIn = () => {
     try {
-        let res = await fetch('/isLoggedIn', {
+        let res = fetch('/isLoggedIn', {
           method: 'post',
           headers: {
             'Accept': 'application/json',
