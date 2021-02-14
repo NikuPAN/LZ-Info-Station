@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
 export default function RankingTop10({data, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
@@ -260,7 +260,7 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 				/>
 			</div>
 			<div className="grid">
-				<div id="myGrid" className="ag-theme-alpine-dark" 
+				<div id="myGrid" className="ag-theme-alpine" 
 				style={{ height: "500px", width: "95%" }}>
 					<AgGridReact
 						columnDefs={columnDefs}
@@ -273,7 +273,7 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 				</div>
 			</div>
 			<div>
-				<h5>最終更新日時: {formattedTimestamp}</h5>
+				<h6>最終更新日時: {formattedTimestamp}</h6>
 			</div>
 		</div>
 	);
