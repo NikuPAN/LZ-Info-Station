@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import TextField from '@material-ui/core/TextField';
 import RankingTop10 from './RankingTop10';
  
 class Ranking extends Component {
@@ -6,13 +7,23 @@ class Ranking extends Component {
     super(props);
     this.state = {
       eventDetail: [],
-      roundMaxPoint: 17350,
+      roundMaxPoint: 17100,
       fastestRoundSec: 125,
-      maintainenceHr: 0.00
+      maintainenceHr: 0.00,
+      darkMode: true,
+      trackingIDs: [
+        {id: 0, gameId: 0, name: ""}, 
+        {id: 1, gameId: 0, name: ""}, 
+        {id: 2, gameId: 0, name: ""}, 
+        {id: 3, gameId: 0, name: ""}, 
+        {id: 4, gameId: 0, name: ""},
+        {id: 5, gameId: 0, name: ""}
+      ]
     };
   }
 
-  async getAllData() {
+
+  getAllData = async() => {
 		let response = await fetch("https://cronpublic.yasushi.me/ranking.json");
 		let data = await response.json();
 		return data;
@@ -63,6 +74,43 @@ class Ranking extends Component {
     return time;
   }
 
+  onTrackIDChange(id, e) {
+    var index = this.state.trackingIDs.findIndex(x => x.id === id);
+    if (index !== -1) {
+      // console.log("field game_id id: "+index, "val: "+e.target.value);
+      let temp = [...this.state.trackingIDs];
+      temp[index].gameId = parseInt(e.target.value);
+      this.setState({
+        trackingIDs: [
+          ...temp
+          //  ...this.state.trackingIDs.slice(0, index),
+          //  Object.assign({}, this.state.trackingIDs[index], {id: e.target.value}),
+          //  ...this.state.trackingIDs.slice(index + 1)
+        ]
+      });
+      console.log(this.state.trackingIDs[index]);
+    }
+    else {
+      console.log("Nothing match (game id field).")
+    }
+  }
+
+  onTrackNameChange(id, e) {
+    var index = this.state.trackingIDs.findIndex(x => x.id === id);
+    if (index !== -1) {
+      // console.log("field name id: "+index, "val: "+e.target.value);
+      let temp = [...this.state.trackingIDs];
+      temp[index].name = e.target.value;
+      this.setState({
+        trackingIDs: [...temp]
+      });
+      console.log(this.state.trackingIDs[index]);
+    }
+    else {
+      console.log("Nothing match (name field).")
+    }
+  }
+
   render() {
     return (
       <div>
@@ -73,17 +121,55 @@ class Ranking extends Component {
               | イベントデュレーション: <b>{this.state.eventDetail.eventDurationHr} 時間</b>
             </h4>
             <h5>
-              周回理論PT: <b>{this.state.roundMaxPoint}</b> <br/>
+              周回理論PT: <b>{this.state.roundMaxPoint}</b>、
               周回理論時間: <b>{this.state.fastestRoundSec} 秒</b>
             </h5>
             <RankingTop10 
               data={this.state.eventDetail}
+              trackData={this.state.trackingIDs}
               eventStartTimestamp={this.state.eventDetail.startAt}
               eventDuration={this.state.eventDetail.eventDurationHr}
               roundMaxPt={this.state.roundMaxPoint}
               fastestRound={this.state.fastestRoundSec}
               maintainenceHr={this.state.maintainenceHr}
             />
+          </div>
+          <div className="trackDetail left">
+            {this.state.trackingIDs.map((tracking, i) => (
+              <div>
+                <TextField
+                  label="玩家ID"
+                  style={{ background: "white", borderRadius: "5px" }}
+                  defaultValue={tracking.gameId}
+                  onChange={i, e => this.onTrackIDChange(i, e)}
+                  // onChange={e => console.log("id: "+i, "val: "+e.target.value)}
+                  name={"track_id"+i}
+                  variant="filled"
+                  margin="dense"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                &nbsp;
+                <TextField
+                  label="自行更改暱稱"
+                  style={{ background: "white", borderRadius: "5px" }}
+                  defaultValue={tracking.name}
+                  onChange={i, e => this.onTrackNameChange(i, e)}
+                  name={"track_name"+i}
+                  variant="filled"
+                  margin="dense"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="trackDetail right">
+            <h1>Multi-axis chart</h1><br/>
+            <h1>Multi-axis chart</h1><br/>
+            <h1>Multi-axis chart</h1>
           </div>
       </div>
     );

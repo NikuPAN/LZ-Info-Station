@@ -2,35 +2,39 @@ import React, { useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
 export default function RankingTop10({data, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
 
 	const [rowRecord, setRowRecord] = useState([[]]);
 	const [gridApi, setGridApi] = useState(null);
+	const [darkMode, setDarkMode] = useState(true);
 
 	var formattedTimestamp = timestampToDateTime(data.lastModified);
 	var eventProgressed = getTimeDifference(data.lastModified, eventStartTimestamp);
 
 	const [columnDefs, setColumnDefs] = useState([
-			{ headerName: "Top", field: "rank", sortable: true, filter: "agNumberColumnFilter", maxWidth: 80 },
-			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 130 },
-			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 120 },
+			{ headerName: "Top", field: "rank", sortable: false, filter: false, maxWidth: 100 },
+			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 120 },
+			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
 			{ headerName: "ボーナス", field: "bonus", sortable: true, filter: false, maxWidth: 100 },
 			{ headerName: "1位差", field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
 			{ headerName: "前位差", field: "diff_last", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
-			{ headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setDiffLastRoundCellStyle(params), maxWidth: 120 },
-			{ headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, cellStyle: params => setCatchTimeCellStyle(params, 60), maxWidth: 150 },
+			{ headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setDiffLastRoundCellStyle(params), maxWidth: 100 },
+			{ headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, cellStyle: params => setCatchTimeCellStyle(params, 60), maxWidth: 130 },
 			{ headerName: "pt時速", field: "point_per_hour", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
 			{ headerName: "周回時速", field: "round_per_hour", sortable: true, filter: false, maxWidth: 100 },
-			{ headerName: "pt/10分", field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 100 },
-			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 100 },
-			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 100 },
+			{ headerName: "pt/10分", field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 90 },
+			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 90 },
+			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 90 },
       { headerName: "休憩(min)", field: "rest", sortable: true, filter: false, maxWidth: 100 },
-      //{ headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
-      { headerName: "有效場次/hr", field: "valid_round", sortable: true, filter: false, maxWidth: 120 },
+      // { headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
+      { headerName: "場次/hr", field: "valid_round", sortable: true, filter: false, maxWidth: 90 },
       { headerName: "瞬間時速", field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
-      //{ headerName: "吐槽", field: "comment", sortable: true, filter: false, maxWidth: 100 },
+      { headerName: "周回評價", field: "comment", sortable: true, filter: false, maxWidth: 100 },
   ]);
 
   function setDiffLastRoundCellStyle(params) {
@@ -39,13 +43,13 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
       return null;
     let val = params.value;
     if(val < -85) {
-      return {color: '#99cc33', fontWeight: 'bold' /*, backgroundColor: '#b7e1cd'*/ }; // light green
+      return { /*color: '#99cc33', fontWeight: 'bold', */ color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd' }; // light green
     }
     else if(val <- 30 && val >= -85) {
-      return {color: '#ffcc00', fontWeight: 'bold'/*, backgroundColor: '#fce8b2'*/ }; // light yellow
+      return { /*color: '#ffcc00', fontWeight: 'bold' , */ color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2' }; // light yellow
     }
     else if(val >= -30) {
-      return {color: '#ff9966', fontWeight: 'bold'/*, backgroundColor: '#f4c7c3'*/ }; // light red
+      return { /*color: '#ff9966', fontWeight: 'bold' , */ color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3' }; // light red
     }
     else return null;
   }
@@ -57,13 +61,13 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
       return null;
     let val = fromTimeStrToMin(params.value);
     if(val > factor * 3) {
-      return {color: '#99cc33', fontWeight: 'bold' /*, backgroundColor: '#b7e1cd'*/}; // light green
+      return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#b7e1cd' }; // light green
     }
     else if(val > factor && val <= factor * 3) {
-      return {color: '#ffcc00', fontWeight: 'bold' /*, backgroundColor: '#fce8b2'*/}; // light yellow
+      return { /*color: '#ffcc00'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#fce8b2' }; // light yellow
     }
     else if(val >= 0 && val <= factor) {
-      return {color: '#ff9966', fontWeight: 'bold' /*, backgroundColor: '#f4c7c3'*/}; // light red
+      return { /*color: '#ff9966'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#f4c7c3' }; // light red
     }
     else return null;
   }
@@ -71,16 +75,16 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
   function setPointCellStyle(params, factor) {
     let val = params.value;
     if(val >= factor * 5) {
-      return {color: 'red', fontWeight: 'bold' /*, backgroundColor: 'red'*/};
+      return { /*color: 'red'*/ color: '#000', fontWeight: 'bold', backgroundColor: 'red'};
     }
     else if(val >= factor * 3 && val < factor * 5) {
-      return {color: '#ff9966', fontWeight: 'bold' /*, backgroundColor: '#f4c7c3'*/}; // light red
+      return { /*color: '#ff9966'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3'}; // light red
     }
     else if(val >= factor && val < factor * 3) {
-      return {color: '#ffcc00', fontWeight: 'bold' /*, backgroundColor: '#fce8b2'*/}; // light yellow
+      return { /*color: '#ffcc00'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2'}; // light yellow
     }
     else if(val >= 0 && val < factor) {
-      return {color: '#99cc33', fontWeight: 'bold' /*, backgroundColor: '#b7e1cd'*/}; // light green
+      return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd'}; // light green
     }
     else return null;
   }
@@ -93,9 +97,9 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
   }
 
 	function numberFormatter(params) {
-			// this puts commas into the number eg 1000 goes to 1,000,
-			// i pulled this from stack overflow, i have no idea how it works
-			return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+		// this puts commas into the number eg 1000 goes to 1,000,
+		// i pulled this from stack overflow, i have no idea how it works
+		return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 	}
 
 	function getTop10Data(data) {
@@ -117,18 +121,35 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 					diff_last_round: (i > 0 ? Math.ceil((top10[i - 1].point - top10[i].point) / roundMaxPt)*-1 : 0),
 					catch_time: secondsToHrsAndMins(i > 0 ? Math.ceil((top10[i - 1].point - top10[i].point) / roundMaxPt * fastestRound) : 0),
 					point_per_hour: (top10[i].point / ((eventProgressed - maintainenceHr * 3600) > 0 ? (eventProgressed - maintainenceHr * 3600) / 3600 : (eventProgressed / 3600))),
-					round_per_hour: (top10[i].point / ((eventProgressed - maintainenceHr * 3600) > 0 ? (eventProgressed - maintainenceHr * 3600) / 3600 : (eventProgressed / 3600)) / roundMaxPt).toFixed(3),
+					round_per_hour: (top10[i].point / ((eventProgressed - maintainenceHr * 3600) > 0 ? (eventProgressed - maintainenceHr * 3600) / 3600 : (eventProgressed / 3600)) / roundMaxPt).toFixed(2),
 					point_10mins: getPointDiffInPeriod(top10[i].userId, 10),
 					point_30mins: getPointDiffInPeriod(top10[i].userId, 30),
 					point_60mins: getPointDiffInPeriod(top10[i].userId, 60),
 					rest: 0, // need to change
           playerId: top10[i].userId,
           valid_round: getActualRoundWithId(top10[i].userId),
-          speed_in_theory: (getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt).toFixed(2)
+					speed_in_theory: (getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt).toFixed(2),
+					comment: getSpeedComment((getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt), getActualRoundWithId(top10[i].userId))
 				});
 			}
 		}
 		return result;
+	}
+
+	const getSpeedComment = (speed, standard) => {
+		var performance = speed / standard;
+		var rank = (performance >= 0.95) ? 'S+':
+				(performance >= 0.925) ? 'S':
+				(performance >= 0.9) ? 'A+':
+				(performance >= 0.875) ? 'A':
+				(performance >= 0.85) ? 'B+':
+				(performance >= 0.825) ? 'B':
+				(performance >= 0.8) ? 'C+':
+				(performance >= 0.775) ? 'C':
+				(performance >= 0.75) ? 'D+':
+				(performance >= 0.725) ? 'D':
+				'†┏┛墓┗┓†'
+		return rank;
 	}
 
 	function timestampToDateTime(timestamp) {
@@ -165,7 +186,6 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 	async function getAllRecord() {
 		let response = await fetch("https://cronpublic.yasushi.me/record.json");
 		let data = await response.json();
-		// console.log(data);
 		return data;
 	}
 
@@ -228,6 +248,31 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 		)
 		.then(records => setRowRecord(records));
 	}
+
+	
+  const onChangeDarkMode = (e) => {
+		setDarkMode(e.target.checked);
+		setColumnDefs([
+			{ headerName: "Top", field: "rank", sortable: true, filter: "agNumberColumnFilter", maxWidth: 80 },
+			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 130 },
+			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 120 },
+			{ headerName: "ボーナス", field: "bonus", sortable: true, filter: false, maxWidth: 100 },
+			{ headerName: "1位差", field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
+			{ headerName: "前位差", field: "diff_last", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
+			{ headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setDiffLastRoundCellStyle(params), maxWidth: 130 },
+			{ headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, cellStyle: params => setCatchTimeCellStyle(params, 60), maxWidth: 150 },
+			{ headerName: "pt時速", field: "point_per_hour", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
+			{ headerName: "周回時速", field: "round_per_hour", sortable: true, filter: false, maxWidth: 100 },
+			{ headerName: "pt/10分", field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 100 },
+			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 100 },
+			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 100 },
+      { headerName: "休憩(min)", field: "rest", sortable: true, filter: false, maxWidth: 100 },
+      //{ headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
+      { headerName: "有效場次/hr", field: "valid_round", sortable: true, filter: false, maxWidth: 120 },
+      { headerName: "瞬間時速", field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
+      //{ headerName: "吐槽", field: "comment", sortable: true, filter: false, maxWidth: 100 },
+  	]);
+  }
 	
   useEffect(() => {
 		// Call for first time without delay.
@@ -237,18 +282,27 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-  }, []);
-  
-  //console.log(rowRecord);
+  }, [updateAllData, rowRecord]);
 
 	return (
 		<div>
 			<div>
-				{/* <h4>最終更新日時: {formattedTimestamp}</h4> */}
-				{/* <h5>dump: {eventStartTimestamp}, {eventDuration}, {roundMaxPt}, {fastestRound} </h5> */}
 				<h5>
 					活動進度: {secondsToHrsAndMins(eventProgressed)} (剩餘: {secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)})
 				</h5>
+			</div>
+			<div>
+			<FormControlLabel
+				control={
+					<Switch
+						checked={darkMode}
+						onChange={onChangeDarkMode}
+						name="dark_mode" 
+						color="primary"
+					/>
+				}
+				label="ダークモード"
+			/>
 			</div>
 			<div>
 				<ProgressBar 
@@ -260,15 +314,12 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 				/>
 			</div>
 			<div className="grid">
-				<div id="myGrid" className="ag-theme-alpine" 
+				<div id="myGrid" className={darkMode?"ag-theme-alpine-dark":"ag-theme-alpine"} 
 				style={{ height: "500px", width: "95%" }}>
 					<AgGridReact
 						columnDefs={columnDefs}
 						rowData={getTop10Data(data)}
 						onGridReady={onGridReady}
-						// onRowClicked={}
-						// pagination={true}
-						// paginationPageSize={10}
 					/>
 				</div>
 			</div>

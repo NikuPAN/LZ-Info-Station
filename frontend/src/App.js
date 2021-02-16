@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import "./index.css";
 import Main from './component/Main.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
