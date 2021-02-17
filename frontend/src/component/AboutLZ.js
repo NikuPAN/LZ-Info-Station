@@ -6,7 +6,7 @@ class AboutLZ extends Component {
       <div className="aboutLZ">
         <h2>關於LZ？就是這樣而已。</h2>
         <div>
-          <img src={aboutLZ} width="80%" />
+          <img src={aboutLZ} atl="" width="80%" />
         </div>
       </div>
     );

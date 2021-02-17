@@ -1,23 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
-import ProgressBar from 'react-bootstrap/ProgressBar';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import EventProgress from './EventProgress';
+import DarkModeBtn from './DarkModeBtn';
 
-export default function RankingTop10({data, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
+export default function RankingTop10({data, trackData, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
 
 	const [rowRecord, setRowRecord] = useState([[]]);
 	const [gridApi, setGridApi] = useState(null);
 	const [darkMode, setDarkMode] = useState(true);
+	const [columnDefs, setColumnDefs] = useState([]);
 
 	var formattedTimestamp = timestampToDateTime(data.lastModified);
 	var eventProgressed = getTimeDifference(data.lastModified, eventStartTimestamp);
-
-	const [columnDefs, setColumnDefs] = useState([
-			{ headerName: "Top", field: "rank", sortable: false, filter: false, maxWidth: 100 },
+	
+  function onGridReady(params) {
+		setGridApi(params.api);
+		setColumnDefs([
+			{ headerName: "#", field: "rank", sortable: false, filter: false, maxWidth: 80 },
 			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 120 },
 			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
 			{ headerName: "ボーナス", field: "bonus", sortable: true, filter: false, maxWidth: 100 },
@@ -34,8 +36,9 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
       // { headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
       { headerName: "場次/hr", field: "valid_round", sortable: true, filter: false, maxWidth: 90 },
       { headerName: "瞬間時速", field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
-      { headerName: "周回評價", field: "comment", sortable: true, filter: false, maxWidth: 100 },
-  ]);
+      { headerName: "周回評價", field: "comment", sortable: true, filter: false, maxWidth: 120 }
+		]);
+	}
 
   function setDiffLastRoundCellStyle(params) {
     // Do not render style for Rank 1st
@@ -98,8 +101,19 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 
 	function numberFormatter(params) {
 		// this puts commas into the number eg 1000 goes to 1,000,
-		// i pulled this from stack overflow, i have no idea how it works
+		// I pulled this from stack overflow, i have no idea how it works
 		return Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+	}
+
+	function changeName(originName, id) {
+		let name = originName;
+		for (let i = 0; i < trackData.length; i++) {
+			if(parseInt(id) === trackData[i].gameId) {
+				name = trackData[i].name;
+				break;
+			}
+		}
+		return name;
 	}
 
 	function getTop10Data(data) {
@@ -109,7 +123,7 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 			for (var i = 0; i < top10.length; i++) {
 				result.push({
 					rank: top10[i].rank,
-					name: top10[i].name,
+					name: changeName(top10[i].name, top10[i].userId),
 					rankLevel: top10[i].rankLevel,
 					introduction: top10[i].introduction,
 					userId: top10[i].userId,
@@ -138,7 +152,7 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 
 	const getSpeedComment = (speed, standard) => {
 		var performance = speed / standard;
-		var rank = (performance >= 0.95) ? 'S+':
+		var rank = (performance >= 0.95) ? 'SS':
 				(performance >= 0.925) ? 'S':
 				(performance >= 0.9) ? 'A+':
 				(performance >= 0.875) ? 'A':
@@ -146,8 +160,7 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 				(performance >= 0.825) ? 'B':
 				(performance >= 0.8) ? 'C+':
 				(performance >= 0.775) ? 'C':
-				(performance >= 0.75) ? 'D+':
-				(performance >= 0.725) ? 'D':
+				(performance >= 0.75) ? 'D':
 				'†┏┛墓┗┓†'
 		return rank;
 	}
@@ -177,10 +190,6 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 		var hours = Math.floor(second / 3600);
 		var mins = Math.floor(second / 60) - (hours * 60);
 		return (hours+" 小時 "+mins+" 分鐘");
-	}
-
-  function onGridReady(params) {
-		setGridApi(params.api);
 	}
 
 	async function getAllRecord() {
@@ -233,45 +242,24 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 	  }
   }
 
-	function updateAllData() {
-    // This is an async function
+	const updateAllData = useCallback(() => {
 		getAllRecord()
 		.then(res =>
 			res.map(item => {
-        return item.map(top => {
-          return {
-            userId: top.userId,
-            point: top.point
-          };
-        })
+				return item.map(top => {
+					return {
+						userId: top.userId,
+						point: top.point
+					};
+				})
 			}) 
 		)
 		.then(records => setRowRecord(records));
-	}
+	}, [])
 
 	
   const onChangeDarkMode = (e) => {
 		setDarkMode(e.target.checked);
-		setColumnDefs([
-			{ headerName: "Top", field: "rank", sortable: true, filter: "agNumberColumnFilter", maxWidth: 80 },
-			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 130 },
-			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 120 },
-			{ headerName: "ボーナス", field: "bonus", sortable: true, filter: false, maxWidth: 100 },
-			{ headerName: "1位差", field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
-			{ headerName: "前位差", field: "diff_last", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
-			{ headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setDiffLastRoundCellStyle(params), maxWidth: 130 },
-			{ headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, cellStyle: params => setCatchTimeCellStyle(params, 60), maxWidth: 150 },
-			{ headerName: "pt時速", field: "point_per_hour", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
-			{ headerName: "周回時速", field: "round_per_hour", sortable: true, filter: false, maxWidth: 100 },
-			{ headerName: "pt/10分", field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 100 },
-			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 100 },
-			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 100 },
-      { headerName: "休憩(min)", field: "rest", sortable: true, filter: false, maxWidth: 100 },
-      //{ headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
-      { headerName: "有效場次/hr", field: "valid_round", sortable: true, filter: false, maxWidth: 120 },
-      { headerName: "瞬間時速", field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
-      //{ headerName: "吐槽", field: "comment", sortable: true, filter: false, maxWidth: 100 },
-  	]);
   }
 	
   useEffect(() => {
@@ -286,31 +274,21 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 
 	return (
 		<div>
-			<div>
+			<div className="eventdetail left2">
 				<h5>
 					活動進度: {secondsToHrsAndMins(eventProgressed)} (剩餘: {secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)})
 				</h5>
 			</div>
-			<div>
-			<FormControlLabel
-				control={
-					<Switch
-						checked={darkMode}
-						onChange={onChangeDarkMode}
-						name="dark_mode" 
-						color="primary"
-					/>
-				}
-				label="ダークモード"
-			/>
+			<div className="eventdetail right2">
+				<DarkModeBtn 
+					checked={darkMode}
+					onChange={onChangeDarkMode}
+				/>
 			</div>
-			<div>
-				<ProgressBar 
-					variant="custom" 
-					animated 
-					now={((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0)} 
-					label={`${((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0).toFixed(2)}%`}
-					style={{ backgroundColor: 'inherit' }} 
+			<div className="progress">
+				<EventProgress 
+					now={((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0)}
+					label={`${((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0).toFixed(1)}%`}
 				/>
 			</div>
 			<div className="grid">
@@ -320,6 +298,7 @@ export default function RankingTop10({data, eventStartTimestamp, eventDuration, 
 						columnDefs={columnDefs}
 						rowData={getTop10Data(data)}
 						onGridReady={onGridReady}
+						onRowClicked={null}
 					/>
 				</div>
 			</div>

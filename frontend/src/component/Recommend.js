@@ -6,7 +6,6 @@ class Recommend extends Component {
       <div>
         <h2>系統建議</h2>
         <div>
-
         </div>
       </div>
     );

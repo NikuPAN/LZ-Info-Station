@@ -115,7 +115,7 @@ class Ranking extends Component {
     return (
       <div>
           <div>
-            <h2>TOP 10 - <b>{this.state.eventDetail.eventName} ({this.state.eventDetail.eventId})</b></h2>
+            <h2 style={{ fontStyle:"italic" }}>TOP 10 - <b>{this.state.eventDetail.eventName} ({this.state.eventDetail.eventId})</b></h2>
             <h4>
               スタート日: <b>{this.state.eventDetail.startDate} </b> 
               | イベントデュレーション: <b>{this.state.eventDetail.eventDurationHr} 時間</b>
@@ -139,10 +139,10 @@ class Ranking extends Component {
               <div>
                 <TextField
                   label="玩家ID"
+                  type="number"
                   style={{ background: "white", borderRadius: "5px" }}
                   defaultValue={tracking.gameId}
                   onChange={i, e => this.onTrackIDChange(i, e)}
-                  // onChange={e => console.log("id: "+i, "val: "+e.target.value)}
                   name={"track_id"+i}
                   variant="filled"
                   margin="dense"

@@ -1,3 +1,10 @@
+/*Get rid of scroll bars but keep functionality*/
+body::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .App {
   text-align: center;
 }
@@ -9,6 +16,10 @@
 
 .App-header {
   background-color: #282c34;
+  /* background-image: url("./background/abcsleep.png");
+  background-position: center; 
+  background-repeat: no-repeat;
+  background-size: 100%; */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -64,7 +75,26 @@ h6 {
 
 .right {
   width: 70%;
-  /* border-width: 1px solid;
-  border-radius: 5px;
-  border-color: white; */
+}
+
+.eventdetail {
+  float: left;
+  width: 100%;
+  margin-left: 1.25%;
+  /* display: inline; */
+}
+
+.left2 {
+  width: 50%;
+}
+
+.right2 {
+  width: 45%;
+  text-align: right;
+}
+
+.progress {
+  width: 95%;
+  display: inline;
+  background-color: inherit;
 }
