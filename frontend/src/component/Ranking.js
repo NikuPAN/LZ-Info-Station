@@ -88,7 +88,7 @@ class Ranking extends Component {
           //  ...this.state.trackingIDs.slice(index + 1)
         ]
       });
-      console.log(this.state.trackingIDs[index]);
+      // console.log(this.state.trackingIDs[index]);
     }
     else {
       console.log("Nothing match (game id field).")
@@ -104,7 +104,7 @@ class Ranking extends Component {
       this.setState({
         trackingIDs: [...temp]
       });
-      console.log(this.state.trackingIDs[index]);
+      // console.log(this.state.trackingIDs[index]);
     }
     else {
       console.log("Nothing match (name field).")

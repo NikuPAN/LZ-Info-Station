@@ -94,7 +94,8 @@ h6 {
 }
 
 .progress {
-  width: 95%;
-  display: inline;
+  width: 98.75%;
+  float:left;
+  display:inline;
   background-color: inherit;
 }

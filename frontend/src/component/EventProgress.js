@@ -4,10 +4,12 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 
 const EventProgress = props => {
   return (
-    <div>
+    <div className="progress">
       <ProgressBar 
         variant="custom" 
         animated 
+        min={0}
+        max={100}
         now={props.now} 
         label={props.label}
         style={{ backgroundColor: 'inherit' }} 

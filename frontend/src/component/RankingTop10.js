@@ -12,6 +12,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	const [gridApi, setGridApi] = useState(null);
 	const [darkMode, setDarkMode] = useState(true);
 	const [columnDefs, setColumnDefs] = useState([]);
+	// var origin_Name = updateOriginName(data.topUsers);
 
 	var formattedTimestamp = timestampToDateTime(data.lastModified);
 	var eventProgressed = getTimeDifference(data.lastModified, eventStartTimestamp);
@@ -20,7 +21,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		setGridApi(params.api);
 		setColumnDefs([
 			{ headerName: "#", field: "rank", sortable: false, filter: false, maxWidth: 80 },
-			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", minWidth: 120 },
+			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", cellStyle: params => setNameCellStyle(params), minWidth: 120 },
 			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
 			{ headerName: "ボーナス", field: "bonus", sortable: true, filter: false, maxWidth: 100 },
 			{ headerName: "1位差", field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
@@ -39,6 +40,10 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
       { headerName: "周回評價", field: "comment", sortable: true, filter: false, maxWidth: 120 }
 		]);
 	}
+ 
+	function setNameCellStyle(params) {
+		return  { color: '#99cc33', fontWeight: 'bold' };
+	}
 
   function setDiffLastRoundCellStyle(params) {
     // Do not render style for Rank 1st
@@ -54,7 +59,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
     else if(val >= -30) {
       return { /*color: '#ff9966', fontWeight: 'bold' , */ color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3' }; // light red
     }
-    else return null;
+    return null;
   }
 
   // factor is minute
@@ -72,7 +77,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
     else if(val >= 0 && val <= factor) {
       return { /*color: '#ff9966'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#f4c7c3' }; // light red
     }
-    else return null;
+    return null;
   }
   
   function setPointCellStyle(params, factor) {
@@ -89,7 +94,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
     else if(val >= 0 && val < factor) {
       return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd'}; // light green
     }
-    else return null;
+    return null;
   }
 
   function fromTimeStrToMin(time_str) {
@@ -115,6 +120,17 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		}
 		return name;
 	}
+
+	// function updateOriginName(users) {
+	// 	let tmp = [];
+	// 	console.log(users);
+	// 	if(users) {
+	// 		users.map(user => {
+	// 			tmp.push(user.name);
+	// 		});
+	// 	}
+	// 	return tmp;
+	// }
 
 	function getTop10Data(data) {
 		let result = [];
@@ -255,7 +271,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 			}) 
 		)
 		.then(records => setRowRecord(records));
-	}, [])
+	}, []);
 
 	
   const onChangeDarkMode = (e) => {
@@ -285,15 +301,18 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 					onChange={onChangeDarkMode}
 				/>
 			</div>
-			<div className="progress">
+			<div>
 				<EventProgress 
 					now={((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0)}
 					label={`${((eventProgressed / getTimeDifference(data.endAt, data.startAt)) * 100.0).toFixed(1)}%`}
 				/>
 			</div>
 			<div className="grid">
-				<div id="myGrid" className={darkMode?"ag-theme-alpine-dark":"ag-theme-alpine"} 
-				style={{ height: "500px", width: "95%" }}>
+				<div 
+					id="myGrid" 
+					className={darkMode?"ag-theme-alpine-dark":"ag-theme-alpine"} 
+					style={{ height: "500px", width: "95%" }}
+				>
 					<AgGridReact
 						columnDefs={columnDefs}
 						rowData={getTop10Data(data)}
@@ -301,6 +320,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 						onRowClicked={null}
 					/>
 				</div>
+
 			</div>
 			<div>
 				<h6>最終更新日時: {formattedTimestamp}</h6>
