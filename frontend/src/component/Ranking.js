@@ -7,7 +7,7 @@ class Ranking extends Component {
     super(props);
     this.state = {
       eventDetail: [],
-      roundMaxPoint: 17100,
+      roundMaxPoint: 11500,
       fastestRoundSec: 125,
       maintainenceHr: 0.00,
       darkMode: true,
