@@ -5,40 +5,46 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 import EventProgress from './EventProgress';
 import DarkModeBtn from './DarkModeBtn';
+import { useTranslation } from 'react-i18next';
 
-export default function RankingTop10({data, trackData, eventStartTimestamp, eventDuration, roundMaxPt, fastestRound, maintainenceHr}) {
+export default function RankingTop10({data, trackData, eventStartTimestamp, eventDuration, maintainenceHr}) {
 
 	const [rowRecord, setRowRecord] = useState([[]]);
 	const [gridApi, setGridApi] = useState(null);
 	const [darkMode, setDarkMode] = useState(true);
 	const [columnDefs, setColumnDefs] = useState([]);
-	// var origin_Name = updateOriginName(data.topUsers);
+	const [roundMaxPt, setRoundMaxPt] = useState(11500);
+	const [fastestRound, setFastestRound] = useState(130);
+
+	// Translation
+	const { t } = useTranslation();
 
 	var formattedTimestamp = timestampToDateTime(data.lastModified);
 	var eventProgressed = getTimeDifference(data.lastModified, eventStartTimestamp);
+	var colDef = [
+		{ headerName: "#", field: "rank", sortable: false, filter: false, maxWidth: 55 },
+		{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", cellStyle: params => setNameCellStyle(params), minWidth: 120 },
+		{ headerName: `${t('EVENT_PT')}`, field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
+		{ headerName: `${t('EVENT_BONUS')}`, field: "bonus", sortable: true, filter: false, maxWidth: 100 },
+		{ headerName: `${t('1ST_DIFF')}`, field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
+		{ headerName: `${t('FRONT_DIFF')}`, field: "diff_last", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
+		{ headerName: `${t('RND_DIFF')}`, field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setDiffLastRoundCellStyle(params), maxWidth: 100 },
+		{ headerName: `${t('CATCH_TIME')}`, field: "catch_time", sortable: true, filter: false, cellStyle: params => setCatchTimeCellStyle(params, 60), maxWidth: 140 },
+		{ headerName: `${t('PT_PER_HOUR')}`, field: "point_per_hour", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 95 },
+		{ headerName: `${t('AVG_RND_PER_HOUR')}`, field: "round_per_hour", sortable: true, filter: false, maxWidth: 105 },
+		{ headerName: `${t('PT_10MINS')}`, field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 90 },
+		{ headerName: `${t('PT_30MINS')}`, field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 90 },
+		{ headerName: `${t('PT_60MINS')}`, field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 90 },
+		{ headerName: `${t('REST')}`, field: "rest", sortable: true, filter: false, maxWidth: 100 },
+		// { headerName: `${t('PLAYER_NAME')}`, field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
+		{ headerName: `${t('INSTANT_RND_PER_HOUR')}`, field: "valid_round", sortable: true, filter: false, maxWidth: 105 },
+		{ headerName: `${t('INSTANT_RND_IN_MAX_PT')}`, field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
+		{ headerName: `${t('GRADE')}`, field: "comment", sortable: true, filter: false, maxWidth: 120 }
+	];
 	
   function onGridReady(params) {
 		setGridApi(params.api);
-		setColumnDefs([
-			{ headerName: "#", field: "rank", sortable: false, filter: false, maxWidth: 80 },
-			{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", cellStyle: params => setNameCellStyle(params), minWidth: 120 },
-			{ headerName: "イベントpt", field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
-			{ headerName: "ボーナス", field: "bonus", sortable: true, filter: false, maxWidth: 100 },
-			{ headerName: "1位差", field: "diff_1st", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
-			{ headerName: "前位差", field: "diff_last", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
-			{ headerName: "前位回数差", field: "diff_last_round", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setDiffLastRoundCellStyle(params), maxWidth: 100 },
-			{ headerName: "追撃時間", field: "catch_time", sortable: true, filter: false, cellStyle: params => setCatchTimeCellStyle(params, 60), maxWidth: 130 },
-			{ headerName: "pt時速", field: "point_per_hour", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 100 },
-			{ headerName: "周回時速", field: "round_per_hour", sortable: true, filter: false, maxWidth: 100 },
-			{ headerName: "pt/10分", field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 90 },
-			{ headerName: "pt/30分", field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 90 },
-			{ headerName: "pt/60分", field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 90 },
-      { headerName: "休憩(min)", field: "rest", sortable: true, filter: false, maxWidth: 100 },
-      // { headerName: "玩家ID", field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
-      { headerName: "場次/hr", field: "valid_round", sortable: true, filter: false, maxWidth: 90 },
-      { headerName: "瞬間時速", field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
-      { headerName: "周回評價", field: "comment", sortable: true, filter: false, maxWidth: 120 }
-		]);
+		setColumnDefs(colDef);
 	}
  
 	function setNameCellStyle(params) {
@@ -66,7 +72,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
   function setCatchTimeCellStyle(params, factor) {
     // Do not render style for Rank 1st
     if(params.node.data.rank === 1) // WTF am I doing??
-      return null;
+			return null;
     let val = fromTimeStrToMin(params.value);
     if(val > factor * 3) {
       return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#b7e1cd' }; // light green
@@ -81,7 +87,9 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
   }
   
   function setPointCellStyle(params, factor) {
-    let val = params.value;
+		let val = params.value;
+		if(factor === 0) // return null if round max pt is not passed in
+			return null;
     if(val >= factor * 5) {
       return { /*color: 'red'*/ color: '#000', fontWeight: 'bold', backgroundColor: 'red'};
     }
@@ -98,7 +106,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
   }
 
   function fromTimeStrToMin(time_str) {
-    let res = time_str.split(" 小時 ");
+    let res = time_str.split(` ${t('HOUR')} `);
     let hrs = parseInt(res[0]); // hrs
     let min = parseInt(res[1]);
     return (hrs * 60 + min);
@@ -120,17 +128,6 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		}
 		return name;
 	}
-
-	// function updateOriginName(users) {
-	// 	let tmp = [];
-	// 	console.log(users);
-	// 	if(users) {
-	// 		users.map(user => {
-	// 			tmp.push(user.name);
-	// 		});
-	// 	}
-	// 	return tmp;
-	// }
 
 	function getTop10Data(data) {
 		let result = [];
@@ -205,7 +202,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	function secondsToHrsAndMins(second) {
 		var hours = Math.floor(second / 3600);
 		var mins = Math.floor(second / 60) - (hours * 60);
-		return (hours+" 小時 "+mins+" 分鐘");
+		return (hours+` ${t('HOUR')} `+mins+` ${t('MINUTE')}`);
 	}
 
 	async function getAllRecord() {
@@ -214,12 +211,28 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		return data;
 	}
 
+	function updateRoundMaxPt() {
+		let maxPt = 0;
+		for(let i = 0; i < rowRecord.length - 1; i++) {
+			for(let j = 0; j < rowRecord[i].length; j++) {
+				if(rowRecord[i][j].userId === rowRecord[i + 1][j].userId) {
+					let newMax = (rowRecord[i][j].point - rowRecord[i + 1][j].point);
+					if(maxPt < newMax)
+						maxPt = newMax;
+				}
+			}
+		}
+		setRoundMaxPt(maxPt);
+		console.log("Round max pt: "+roundMaxPt);
+		// return maxPt;
+	}
+
   function getSpecificIdRecord(array, userId) {
     let res = [];
     if(!array || array.length === 0)
       return null;
-    for(var i = 0; i < array.length; i++) {
-      for(var j = 0; j < array[i].length; j++) {
+    for(let i = 0; i < array.length; i++) {
+      for(let j = 0; j < array[i].length; j++) {
         if(array[i][j].userId === userId) 
           res.push(array[i][j].point);
       }
@@ -273,26 +286,32 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		.then(records => setRowRecord(records));
 	}, []);
 
+	const onChangeLanguage = () => {
+		setColumnDefs(colDef);
+	} 
 	
   const onChangeDarkMode = (e) => {
 		setDarkMode(e.target.checked);
+		setColumnDefs(colDef);
   }
 	
   useEffect(() => {
 		// Call for first time without delay.
 		updateAllData();
+		updateRoundMaxPt();
 		const interval = setInterval(() => {
 			// Loop from second request.
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-  }, [updateAllData, rowRecord]);
+  }, [updateAllData, rowRecord], [roundMaxPt]);
 
 	return (
 		<div>
 			<div className="eventdetail left2">
 				<h5>
-					活動進度: {secondsToHrsAndMins(eventProgressed)} (剩餘: {secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)})
+					{t('MAX_PT')}: <b>{roundMaxPt}</b>、{t('FASTEST_RND')}: <b>{fastestRound} 秒</b><br/>
+					{t('EVENT_PROGRESS')}: <b>{secondsToHrsAndMins(eventProgressed)}</b> ({t('EVENT_TIME_LEFT')}: <b>{secondsToHrsAndMins((eventDuration * 60 * 60) - eventProgressed)}</b>)
 				</h5>
 			</div>
 			<div className="eventdetail right2">
@@ -323,7 +342,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 
 			</div>
 			<div>
-				<h6>最終更新日時: {formattedTimestamp}</h6>
+				<h6>{t('LAST_UPDATE')}: {formattedTimestamp}</h6>
 			</div>
 		</div>
 	);

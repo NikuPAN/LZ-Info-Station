@@ -2,12 +2,16 @@ import React from 'react'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next';
 
 const DarkModeBtn = props => {
 
   const onChangeDarkMode = (e) => {
     props.onChange(e);
   }
+  // Translation
+	const { t } = useTranslation();
+
 
   return (
     <div>
@@ -20,7 +24,7 @@ const DarkModeBtn = props => {
 						color="primary"
 					/>
 				}
-				label="ダークモード"
+				label={t('DARK_MODE')}
 			/>
     </div>
   )

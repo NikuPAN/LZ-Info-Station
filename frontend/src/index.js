@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import "./index.css";
 import { Provider } from 'react-redux';
 import store from './store';
+import './i18n';
 
 // This is called every time the state of the store is changed
 // const unsubscribe = store.subscribe(() => {
@@ -14,9 +15,11 @@ import store from './store';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <Suspense fallback={<span>Loading...</span>}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </Suspense>
   </React.StrictMode>,
   document.getElementById('root')
 );

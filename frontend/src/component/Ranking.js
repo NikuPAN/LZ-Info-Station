@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import TextField from '@material-ui/core/TextField';
 import RankingTop10 from './RankingTop10';
+import { Trans, withTranslation } from 'react-i18next';
  
 class Ranking extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
       eventDetail: [],
-      roundMaxPoint: 11500,
-      fastestRoundSec: 125,
       maintainenceHr: 0.00,
       darkMode: true,
       trackingIDs: [
@@ -18,10 +18,15 @@ class Ranking extends Component {
         {id: 3, gameId: 0, name: ""}, 
         {id: 4, gameId: 0, name: ""},
         {id: 5, gameId: 0, name: ""}
-      ]
+      ],
     };
+    this.top10Ref = createRef();
   }
 
+  onChangeLanguage = () => {
+    console.log("onChangeLanguage in Ranking.js has been called!");
+    this.top10Ref.current.onChangeLanguage();
+  }
 
   getAllData = async() => {
 		let response = await fetch("https://cronpublic.yasushi.me/ranking.json");
@@ -117,21 +122,16 @@ class Ranking extends Component {
           <div>
             <h2 style={{ fontStyle:"italic" }}>TOP 10 - <b>{this.state.eventDetail.eventName} ({this.state.eventDetail.eventId})</b></h2>
             <h4>
-              スタート日: <b>{this.state.eventDetail.startDate} </b> 
-              | イベントデュレーション: <b>{this.state.eventDetail.eventDurationHr} 時間</b>
+              <Trans>START_DATE</Trans>: <b>{this.state.eventDetail.startDate} </b> 
+              | <Trans>EV_DURATION</Trans>: <b>{this.state.eventDetail.eventDurationHr} <Trans>HOUR</Trans></b>
             </h4>
-            <h5>
-              周回理論PT: <b>{this.state.roundMaxPoint}</b>、
-              周回理論時間: <b>{this.state.fastestRoundSec} 秒</b>
-            </h5>
-            <RankingTop10 
+            <RankingTop10
               data={this.state.eventDetail}
               trackData={this.state.trackingIDs}
               eventStartTimestamp={this.state.eventDetail.startAt}
               eventDuration={this.state.eventDetail.eventDurationHr}
-              roundMaxPt={this.state.roundMaxPoint}
-              fastestRound={this.state.fastestRoundSec}
               maintainenceHr={this.state.maintainenceHr}
+              ref={this.top10Ref}
             />
           </div>
           <div className="trackDetail left">
@@ -176,4 +176,4 @@ class Ranking extends Component {
   }
 }
 
-export default Ranking;
+export default withTranslation()(Ranking);
