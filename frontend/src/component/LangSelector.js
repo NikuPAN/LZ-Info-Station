@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
  
 const LangSelector = (props) => {
   const { i18n } = useTranslation();
-  const [selectedLang, setSelectedLang] = useState('zh-tw');
+  const [selectedLang, setSelectedLang] = useState('zh');
  
   const changeLanguage = (event) => {
     setSelectedLang(event.target.value);
@@ -15,7 +15,7 @@ const LangSelector = (props) => {
     <div onChange={changeLanguage}>
       <h6 style={{ textAlign: "right" }}>
         <label className="mr10">
-          <input type="radio" value="zh-tw" name="language" checked={selectedLang === 'zh-tw'} /> 正體中文
+          <input type="radio" value="zh" name="language" checked={selectedLang === 'zh'} /> 正體中文
         </label>
         &nbsp;&nbsp;
         <label>

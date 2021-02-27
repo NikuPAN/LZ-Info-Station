@@ -16,12 +16,12 @@ i18n
   // init i18next
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    lng: 'zh-tw',
+    lng: 'zh',
     backend: {
       /* translation file path */
       loadPath: '/assets/i18n/{{ns}}/{{lng}}.json'
     },
-    fallbackLng: 'zh-tw',
+    fallbackLng: 'zh',
     debug: true,
     /* can have multiple namespace, in case you want to divide a huge translation into smaller pieces and load them on demand */
     ns: ['translations'],
