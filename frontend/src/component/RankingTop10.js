@@ -48,7 +48,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	}
  
 	function setNameCellStyle(params) {
-		return  { color: '#99cc33', fontWeight: 'bold' };
+		return  { color: '#8888ff', fontWeight: 'bold' };
 	}
 
   function setDiffLastRoundCellStyle(params) {
@@ -212,6 +212,8 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	}
 
 	function updateRoundMaxPt() {
+		if(rowRecord === [[]])
+			return;
 		let maxPt = 0;
 		for(let i = 0; i < rowRecord.length - 1; i++) {
 			for(let j = 0; j < rowRecord[i].length; j++) {
@@ -283,7 +285,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 				})
 			}) 
 		)
-		.then(records => setRowRecord(records));
+		.then(records => setRowRecord(records))
 	}, []);
 
 	const onChangeLanguage = () => {
@@ -298,13 +300,13 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
   useEffect(() => {
 		// Call for first time without delay.
 		updateAllData();
-		updateRoundMaxPt();
+		// updateRoundMaxPt();
 		const interval = setInterval(() => {
 			// Loop from second request.
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-  }, [updateAllData, rowRecord], [roundMaxPt]);
+  }, [updateAllData, rowRecord]);
 
 	return (
 		<div>
