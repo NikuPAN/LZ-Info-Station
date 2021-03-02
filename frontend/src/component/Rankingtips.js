@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import abcsleep from '../background/abcsleep.png';
+import { Trans, withTranslation } from 'react-i18next';
  
 class Rankingtips extends Component {
   render() {
     return (
       <div>
-        <h2>排名攻略</h2>
+        <h2><Trans>RANK_TIPS</Trans></h2>
         <div>
           <img src={abcsleep} atl="" width="50%" />
         </div>
@@ -15,4 +16,4 @@ class Rankingtips extends Component {
   }
 }
 
-export default Rankingtips;
+export default withTranslation()(Rankingtips);

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { Trans, withTranslation } from 'react-i18next';
  
 class Joke extends Component {
   render() {
     return (
       <div>
-        <h2>梗/梗圖/母湯發言</h2>
+        <h2><Trans>MEMES</Trans></h2>
         <div>
 
         </div>
@@ -13,4 +14,4 @@ class Joke extends Component {
   }
 }
 
-export default Joke;
+export default withTranslation()(Joke);

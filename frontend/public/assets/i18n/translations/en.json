@@ -30,7 +30,9 @@
   "INSTANT_RND_IN_MAX_PT":"Th.Rd/hr",
   "GRADE":"Grade",
   "LAST_UPDATE": "Last Updated",
-  "PLAYER_NAME":"",
-  "PLAYER_ID":"",
-  "CUSTOM_NAME":""
+  "PLAYER_NAME":"Player Name",
+  "PLAYER_ID":"Game ID",
+  "CUSTOM_NAME":"Custom Name",
+  "WELCOME":"WELCOME TO LOUDERZONE (LZ)",
+  "WELCOME_MSG":"Welcome to LZ Info Station<br/>This website provides information you need to know getting to the Top 10. <br/>You can also view current Top 10 for each event during event take place.<br/>We also introduce our guild structure so you can know more about us. <br/><br/> This website is built exclusively for LZ members."
 }
