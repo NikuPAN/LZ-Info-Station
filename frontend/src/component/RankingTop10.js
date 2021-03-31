@@ -13,7 +13,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	const [gridApi, setGridApi] = useState(null);
 	const [darkMode, setDarkMode] = useState(true);
 	const [columnDefs, setColumnDefs] = useState([]);
-	const [roundMaxPt, setRoundMaxPt] = useState(7000);
+	const [roundMaxPt, setRoundMaxPt] = useState(7350);
 	const [fastestRound, setFastestRound] = useState(130);
 
 	// Translation
