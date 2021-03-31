@@ -273,7 +273,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	  }
   }
 
-	const updateAllData = useCallback(() => {
+	const updateAllData = () => {
 		getAllRecord()
 		.then(res =>
 			res.map(item => {
@@ -286,7 +286,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 			}) 
 		)
 		.then(records => setRowRecord(records))
-	}, []);
+	}
 
 	const onChangeLanguage = () => {
 		setColumnDefs(colDef);
