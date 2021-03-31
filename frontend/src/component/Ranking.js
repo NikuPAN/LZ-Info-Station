@@ -28,9 +28,9 @@ class Ranking extends Component {
     this.top10Ref.current.onChangeLanguage();
   }
 
-  getAllData = async() => {
-		let response = await fetch("https://cronpublic.yasushi.me/ranking.json");
-		let data = await response.json();
+  getAllData = () => {
+		let data = fetch("https://cronpublic.yasushi.me/ranking.json")
+    .then(response => response.json())
 		return data;
   }
 

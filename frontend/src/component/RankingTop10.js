@@ -205,9 +205,9 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		return (hours+` ${t('HOUR')} `+mins+` ${t('MINUTE')}`);
 	}
 
-	async function getAllRecord() {
-		let response = await fetch("https://cronpublic.yasushi.me/record.json");
-		let data = await response.json();
+	function getAllRecord() {
+		let data = fetch("https://cronpublic.yasushi.me/record.json")
+		.then(response => response.json())
 		return data;
 	}
 
@@ -306,7 +306,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-  }, [updateAllData, rowRecord]);
+  }, [rowRecord]);
 
 	return (
 		<div>
