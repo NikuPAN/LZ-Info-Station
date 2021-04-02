@@ -296,7 +296,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		setDarkMode(e.target.checked);
 		setColumnDefs(colDef);
   }
-	
+
   useEffect(() => {
 		// Call for first time without delay.
 		updateAllData();
@@ -306,7 +306,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-  }, [rowRecord]);
+  }, []); /**, [rowRecord] dependcies array */
 
 	return (
 		<div>
