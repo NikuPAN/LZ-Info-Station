@@ -8,7 +8,7 @@ class Rankingtips extends Component {
       <div>
         <h2><Trans>RANK_TIPS</Trans></h2>
         <div>
-          <img src={abcsleep} atl="" width="50%" />
+          <img src={abcsleep} alt="" width="50%" />
         </div>
         <h2>學青葉ＡＢＣ不睡覺就可以了。</h2>
       </div>

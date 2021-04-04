@@ -34,5 +34,10 @@
   "PLAYER_ID":"Game ID",
   "CUSTOM_NAME":"Custom Name",
   "WELCOME":"WELCOME TO LOUDERZONE (LZ)",
-  "WELCOME_MSG":"Welcome to LZ Info Station<br/>This website provides information you need to know getting to the Top 10. <br/>You can also view current Top 10 for each event during event take place.<br/>We also introduce our guild structure so you can know more about us. <br/><br/> This website is built exclusively for LZ members."
+  "WELCOME_MSG":"Welcome to LZ Info Station<br/>This website provides information you need to know getting to the Top 10. <br/>You can also view current Top 10 for each event during event take place.<br/>We also introduce our guild structure so you can know more about us. <br/><br/> This website is built exclusively for LZ members.",
+  "CHART_TITLE":"TOP10 Event Point vs Instant Round Per Hour",
+  "CHART_SUBTITLE":"Click Legend to Hide or Unhide Data Series",
+  "CHART_AXIS_X_TITLE":"TOP #",
+  "CHART_AXIS_Y_TITLE":"Instant Round/Hr",
+  "CHART_AXIS_Y2_TITLE":"Event Point"
 }

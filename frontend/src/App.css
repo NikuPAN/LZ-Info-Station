@@ -67,6 +67,7 @@ h6 {
 .trackDetail {
   float: left;
   width: 95%;
+  height: 425px;
 }
 
 .left {
@@ -74,7 +75,7 @@ h6 {
 }
 
 .right {
-  width: 70%;
+  width: 67.5%;
 }
 
 .eventdetail {

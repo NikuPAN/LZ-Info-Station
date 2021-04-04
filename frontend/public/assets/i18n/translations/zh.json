@@ -34,5 +34,10 @@
   "PLAYER_ID":"",
   "CUSTOM_NAME":"",
   "WELCOME":"安安，你來錯地方了。",
-  "WELCOME_MSG":"這裡是LZ，我們啥都幹 - <br/>幹榜幹房幹按鈕幹人和幹人老婆。<br/>只要是為了要跑者不睡覺我們啥都幹得出來。<br/>我們還有獨特的迫害文化，讓你進群1分鐘馬上懷疑人生。"
+  "WELCOME_MSG":"這裡是LZ，我們啥都幹 - <br/>幹榜幹房幹按鈕幹人和幹人老婆。<br/>只要是為了要跑者不睡覺我們啥都幹得出來。<br/>我們還有獨特的迫害文化，讓你進群1分鐘馬上懷疑人生。",
+  "CHART_TITLE":"TOP10 活動PT vs 瞬間時速",
+  "CHART_SUBTITLE":"點按圖標以隱藏或顯示數據",
+  "CHART_AXIS_X_TITLE":"TOP #",
+  "CHART_AXIS_Y_TITLE":"瞬間時速",
+  "CHART_AXIS_Y2_TITLE":"活動PT"
 }

@@ -306,7 +306,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-  }, []); /**, [rowRecord] dependcies array */
+  }, []); /**, [rowRecord] dependencies array */
 
 	return (
 		<div>

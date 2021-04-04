@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react';
 import TextField from '@material-ui/core/TextField';
 import RankingTop10 from './RankingTop10';
+import MultiAxisChart from './MultiAxisChart';
 import { Trans, withTranslation } from 'react-i18next';
  
 class Ranking extends Component {
@@ -53,7 +54,7 @@ class Ranking extends Component {
     .then(ranks => this.setState({ eventDetail: ranks }));
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     // Call for first time without delay.
     this.updateAllData();
 		const interval = setInterval(() => {
@@ -167,9 +168,10 @@ class Ranking extends Component {
             ))}
           </div>
           <div className="trackDetail right">
-            <h1>Multi-axis chart</h1><br/>
-            <h1>Multi-axis chart</h1><br/>
-            <h1>Multi-axis chart</h1>
+            <MultiAxisChart 
+              data={this.state.eventDetail}
+              roundMaxPt={7350}
+            />
           </div>
       </div>
     );

@@ -34,5 +34,10 @@
   "PLAYER_ID":"",
   "CUSTOM_NAME":"",
   "WELCOME":"ようこそLouderZoneへ",
-  "WELCOME_MSG":"氷結うまし、タイツうまし、ＡＢＣねれない、イエーイ。"
+  "WELCOME_MSG":"氷結うまし、タイツうまし、ＡＢＣねれない、イエーイ。",
+  "CHART_TITLE":"TOP10 イベントPT vs 回数/hr",
+  "CHART_SUBTITLE":"點按圖標以隱藏或顯示數據",
+  "CHART_AXIS_X_TITLE":"TOP #",
+  "CHART_AXIS_Y_TITLE":"回数/hr",
+  "CHART_AXIS_Y2_TITLE":"イベントPT"
 }
