@@ -25,7 +25,6 @@ class Ranking extends Component {
   }
 
   onChangeLanguage = () => {
-    console.log("onChangeLanguage in Ranking.js has been called!");
     this.top10Ref.current.onChangeLanguage();
   }
 
@@ -36,7 +35,7 @@ class Ranking extends Component {
   }
 
   updateAllData = () => {
-		// This is an async function.
+		// This is a function.
 		this.getAllData()
 		.then(res => {
 			return {
@@ -87,12 +86,7 @@ class Ranking extends Component {
       let temp = [...this.state.trackingIDs];
       temp[index].gameId = parseInt(e.target.value);
       this.setState({
-        trackingIDs: [
-          ...temp
-          //  ...this.state.trackingIDs.slice(0, index),
-          //  Object.assign({}, this.state.trackingIDs[index], {id: e.target.value}),
-          //  ...this.state.trackingIDs.slice(index + 1)
-        ]
+        trackingIDs: [...temp]
       });
       // console.log(this.state.trackingIDs[index]);
     }
@@ -110,7 +104,6 @@ class Ranking extends Component {
       this.setState({
         trackingIDs: [...temp]
       });
-      // console.log(this.state.trackingIDs[index]);
     }
     else {
       console.log("Nothing match (name field).")
@@ -120,59 +113,59 @@ class Ranking extends Component {
   render() {
     return (
       <div>
-          <div>
-            <h2 style={{ fontStyle:"italic" }}>TOP 10 - <b>{this.state.eventDetail.eventName} ({this.state.eventDetail.eventId})</b></h2>
-            <h4>
-              <Trans>START_DATE</Trans>: <b>{this.state.eventDetail.startDate} </b> 
-              | <Trans>EV_DURATION</Trans>: <b>{this.state.eventDetail.eventDurationHr} <Trans>HOUR</Trans></b>
-            </h4>
-            <RankingTop10
-              data={this.state.eventDetail}
-              trackData={this.state.trackingIDs}
-              eventStartTimestamp={this.state.eventDetail.startAt}
-              eventDuration={this.state.eventDetail.eventDurationHr}
-              maintainenceHr={this.state.maintainenceHr}
-              ref={this.top10Ref}
-            />
-          </div>
-          <div className="trackDetail left">
-            {this.state.trackingIDs.map((tracking, i) => (
-              <div>
-                <TextField
-                  label="玩家ID"
-                  type="number"
-                  style={{ background: "white", borderRadius: "5px", width: "40%" }}
-                  defaultValue={tracking.gameId}
-                  onChange={i, e => this.onTrackIDChange(i, e)}
-                  name={"track_id"+i}
-                  variant="filled"
-                  margin="dense"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                &nbsp;
-                <TextField
-                  label="自行更改暱稱"
-                  style={{ background: "white", borderRadius: "5px", width: "40%" }}
-                  defaultValue={tracking.name}
-                  onChange={i, e => this.onTrackNameChange(i, e)}
-                  name={"track_name"+i}
-                  variant="filled"
-                  margin="dense"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="trackDetail right">
-            <MultiAxisChart 
-              data={this.state.eventDetail}
-              roundMaxPt={7350}
-            />
-          </div>
+        <div>
+          <h2 style={{ fontStyle:"italic" }}>TOP 10 - <b>{this.state.eventDetail.eventName} ({this.state.eventDetail.eventId})</b></h2>
+          <h4>
+            <Trans>START_DATE</Trans>: <b>{this.state.eventDetail.startDate} </b> 
+            | <Trans>EV_DURATION</Trans>: <b>{this.state.eventDetail.eventDurationHr} <Trans>HOUR</Trans></b>
+          </h4>
+          <RankingTop10
+            data={this.state.eventDetail}
+            trackData={this.state.trackingIDs}
+            eventStartTimestamp={this.state.eventDetail.startAt}
+            eventDuration={this.state.eventDetail.eventDurationHr}
+            maintainenceHr={this.state.maintainenceHr}
+            ref={this.top10Ref}
+          />
+        </div>
+        <div className="trackDetail left">
+          {this.state.trackingIDs.map((tracking, i) => (
+            <div>
+              <TextField
+                label="玩家ID"
+                type="number"
+                style={{ background: "white", borderRadius: "5px", width: "40%" }}
+                defaultValue={tracking.gameId}
+                onChange={i, e => this.onTrackIDChange(i, e)}
+                name={"track_id"+i}
+                variant="filled"
+                margin="dense"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              &nbsp;
+              <TextField
+                label="自行更改暱稱"
+                style={{ background: "white", borderRadius: "5px", width: "40%" }}
+                defaultValue={tracking.name}
+                onChange={i, e => this.onTrackNameChange(i, e)}
+                name={"track_name"+i}
+                variant="filled"
+                margin="dense"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="trackDetail right">
+          {/* <MultiAxisChart 
+            data={this.state.eventDetail}
+            roundMaxPt={7350}
+          /> */}
+        </div>
       </div>
     );
   }

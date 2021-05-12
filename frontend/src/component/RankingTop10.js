@@ -13,15 +13,16 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	const [gridApi, setGridApi] = useState(null);
 	const [darkMode, setDarkMode] = useState(true);
 	const [columnDefs, setColumnDefs] = useState([]);
-	const [roundMaxPt, setRoundMaxPt] = useState(7350);
-	const [fastestRound, setFastestRound] = useState(130);
+	const [roundMaxPt, setRoundMaxPt] = useState(1);
+	const [fastestRound, setFastestRound] = useState(127);
 
 	// Translation
 	const { t } = useTranslation();
 
 	var formattedTimestamp = timestampToDateTime(data.lastModified);
 	var eventProgressed = getTimeDifference(data.lastModified, eventStartTimestamp);
-	var colDef = [
+
+	const colDef = [
 		{ headerName: "#", field: "rank", sortable: false, filter: false, maxWidth: 55 },
 		{ headerName: "ID", field: "name", sortable: true, filter: "agTextColumnFilter", cellStyle: params => setNameCellStyle(params), minWidth: 120 },
 		{ headerName: `${t('EVENT_PT')}`, field: "point", sortable: true, filter: false, valueFormatter: numberFormatter, maxWidth: 110 },
@@ -35,7 +36,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		{ headerName: `${t('PT_10MINS')}`, field: "point_10mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt), maxWidth: 90 },
 		{ headerName: `${t('PT_30MINS')}`, field: "point_30mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 3), maxWidth: 90 },
 		{ headerName: `${t('PT_60MINS')}`, field: "point_60mins", sortable: true, filter: false, valueFormatter: numberFormatter, cellStyle: params => setPointCellStyle(params, roundMaxPt * 6), maxWidth: 90 },
-		{ headerName: `${t('REST')}`, field: "rest", sortable: true, filter: false, maxWidth: 100 },
+		{ headerName: `${t('REST')}`, field: "rest", sortable: true, filter: false, cellStyle: params => setRestCellStyle(params, 10), maxWidth: 100 },
 		// { headerName: `${t('PLAYER_NAME')}`, field: "playerId", sortable: true, filter: false, maxWidth: 120 } 
 		{ headerName: `${t('INSTANT_RND_PER_HOUR')}`, field: "valid_round", sortable: true, filter: false, maxWidth: 105 },
 		{ headerName: `${t('INSTANT_RND_IN_MAX_PT')}`, field: "speed_in_theory", sortable: true, filter: false, maxWidth: 100 },
@@ -105,6 +106,19 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
     return null;
   }
 
+	function setRestCellStyle(params, factor) {
+		let val = params.value;
+		if(val < factor) {
+			return { /*color: '#ff9966'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3'}; // light red
+		}
+		else if(val >= factor && val < factor * 3) {
+			return { /*color: '#ffcc00'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2'}; // light yellow
+		}
+		else {
+			return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd'}; // light green
+		}
+	}
+
   function fromTimeStrToMin(time_str) {
     let res = time_str.split(` ${t('HOUR')} `);
     let hrs = parseInt(res[0]); // hrs
@@ -131,6 +145,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 
 	function getTop10Data(data) {
 		let result = [];
+		let round_MaxPt = 0;
 		if(data.topUsers) {
 			let top10 = data.topUsers;
 			for (var i = 0; i < top10.length; i++) {
@@ -142,7 +157,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 					userId: top10[i].userId,
 					point: top10[i].point,
 					userDeck: top10[i].userDeck, // deck of this top player.
-					bonus: 0, // need to implement
+					bonus: top10[i].bonus,
 					diff_1st: (i > 0 ? (top10[i].point - top10[0].point) : 0),
 					diff_last: (i > 0 ? (top10[i].point - top10[i - 1].point) : 0),
 					diff_last_round: (i > 0 ? Math.ceil((top10[i - 1].point - top10[i].point) / roundMaxPt)*-1 : 0),
@@ -152,12 +167,18 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 					point_10mins: getPointDiffInPeriod(top10[i].userId, 10),
 					point_30mins: getPointDiffInPeriod(top10[i].userId, 30),
 					point_60mins: getPointDiffInPeriod(top10[i].userId, 60),
-					rest: 0, // need to change
+					rest: top10[i].restTime,
           playerId: top10[i].userId,
           valid_round: getActualRoundWithId(top10[i].userId),
 					speed_in_theory: (getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt).toFixed(2),
 					comment: getSpeedComment((getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt), getActualRoundWithId(top10[i].userId))
 				});
+				if(round_MaxPt < (result[i].point_60mins / result[i].valid_round)) {
+					round_MaxPt = (result[i].point_60mins / result[i].valid_round);
+				}
+			}
+			if(roundMaxPt != parseInt(round_MaxPt)) {
+				setRoundMaxPt(parseInt(round_MaxPt));
 			}
 		}
 		return result;
@@ -209,24 +230,6 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		let data = fetch("https://cronpublic.yasushi.me/record.json")
 		.then(response => response.json())
 		return data;
-	}
-
-	function updateRoundMaxPt() {
-		if(rowRecord === [[]])
-			return;
-		let maxPt = 0;
-		for(let i = 0; i < rowRecord.length - 1; i++) {
-			for(let j = 0; j < rowRecord[i].length; j++) {
-				if(rowRecord[i][j].userId === rowRecord[i + 1][j].userId) {
-					let newMax = (rowRecord[i][j].point - rowRecord[i + 1][j].point);
-					if(maxPt < newMax)
-						maxPt = newMax;
-				}
-			}
-		}
-		setRoundMaxPt(maxPt);
-		console.log("Round max pt: "+roundMaxPt);
-		// return maxPt;
 	}
 
   function getSpecificIdRecord(array, userId) {
@@ -300,13 +303,13 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
   useEffect(() => {
 		// Call for first time without delay.
 		updateAllData();
-		// updateRoundMaxPt();
 		const interval = setInterval(() => {
 			// Loop from second request.
 			updateAllData();
 		}, 59000);
 		return () => clearInterval(interval);
-  }, []); /**, [rowRecord] dependencies array */
+  }, []);
+
 
 	return (
 		<div>
@@ -341,7 +344,6 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 						onRowClicked={null}
 					/>
 				</div>
-
 			</div>
 			<div>
 				<h6>{t('LAST_UPDATE')}: {formattedTimestamp}</h6>
