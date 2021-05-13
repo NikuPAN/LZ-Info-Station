@@ -14,16 +14,16 @@ const LangSelector = (props) => {
   return (
     <div onChange={changeLanguage}>
       <h6 style={{ textAlign: "right" }}>
-        <label className="mr10">
-          <input type="radio" value="zh" name="language" checked={selectedLang === 'zh'} /> 正體中文
+        <label htmlFor="zhLang">
+          <input id="zhLang" type="radio" value="zh" name="language" defaultChecked={selectedLang === 'zh'} /> 正體中文
         </label>
         &nbsp;&nbsp;
-        <label>
-          <input type="radio" value="jp" name="language" checked={selectedLang === 'jp'} /> 日本語
+        <label htmlFor="jpLang">
+          <input id="jpLang" type="radio" value="jp" name="language" defaultChecked={selectedLang === 'jp'} /> 日本語
         </label>
         &nbsp;&nbsp;
-        <label>
-          <input type="radio" value="en" name="language" checked={selectedLang === 'en'} /> English
+        <label htmlFor="enLang">
+          <input id="enLang" type="radio" value="en" name="language" defaultChecked={selectedLang === 'en'} /> English
         </label>
       </h6>
     </div>

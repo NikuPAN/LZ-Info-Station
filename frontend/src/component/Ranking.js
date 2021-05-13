@@ -21,11 +21,10 @@ class Ranking extends Component {
         {id: 5, gameId: 0, name: ""}
       ],
     };
-    this.top10Ref = createRef();
   }
 
   onChangeLanguage = () => {
-    this.top10Ref.current.onChangeLanguage();
+
   }
 
   getAllData = () => {
@@ -125,12 +124,11 @@ class Ranking extends Component {
             eventStartTimestamp={this.state.eventDetail.startAt}
             eventDuration={this.state.eventDetail.eventDurationHr}
             maintainenceHr={this.state.maintainenceHr}
-            ref={this.top10Ref}
           />
         </div>
         <div className="trackDetail left">
           {this.state.trackingIDs.map((tracking, i) => (
-            <div>
+            <div key={"tracking"+i}>
               <TextField
                 label="玩家ID"
                 type="number"
@@ -146,6 +144,7 @@ class Ranking extends Component {
               />
               &nbsp;
               <TextField
+                
                 label="自行更改暱稱"
                 style={{ background: "white", borderRadius: "5px", width: "40%" }}
                 defaultValue={tracking.name}
