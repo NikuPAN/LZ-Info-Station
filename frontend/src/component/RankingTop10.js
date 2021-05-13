@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -13,7 +13,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	const [gridApi, setGridApi] = useState(null);
 	const [darkMode, setDarkMode] = useState(true);
 	const [columnDefs, setColumnDefs] = useState([]);
-	const [roundMaxPt, setRoundMaxPt] = useState(1);
+	const [roundMaxPt, setRoundMaxPt] = useState(-1);
 	const [fastestRound, setFastestRound] = useState(127);
 
 	// Translation
@@ -45,7 +45,8 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 	
   function onGridReady(params) {
 		setGridApi(params.api);
-		setColumnDefs(colDef);
+		console.log(gridApi);
+		// setColumnDefs(colDef);
 	}
  
 	function setNameCellStyle(params) {
@@ -91,17 +92,19 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 		let val = params.value;
 		if(factor === 0) // return null if round max pt is not passed in
 			return null;
+		if(val < 0)
+			return null;
     if(val >= factor * 5) {
-      return { /*color: 'red'*/ color: '#000', fontWeight: 'bold', backgroundColor: 'red'};
+      return { color: '#000', fontWeight: 'bold', backgroundColor: 'red'};
     }
     else if(val >= factor * 3 && val < factor * 5) {
-      return { /*color: '#ff9966'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3'}; // light red
+      return { color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3'}; // light red
     }
     else if(val >= factor && val < factor * 3) {
-      return { /*color: '#ffcc00'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2'}; // light yellow
+      return { color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2'}; // light yellow
     }
     else if(val >= 0 && val < factor) {
-      return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd'}; // light green
+      return { color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd'}; // light green
     }
     return null;
   }
@@ -177,12 +180,19 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 					round_MaxPt = (result[i].point_60mins / result[i].valid_round);
 				}
 			}
-			if(roundMaxPt != parseInt(round_MaxPt)) {
+			if(round_MaxPt !== 0 && roundMaxPt !== parseInt(round_MaxPt)) {
 				setRoundMaxPt(parseInt(round_MaxPt));
 			}
 		}
 		return result;
 	}
+
+	useEffect(() => {
+		if(roundMaxPt > -1) {
+			// console.log(roundMaxPt);
+			setColumnDefs(colDef);
+		}
+	}, [roundMaxPt]);
 
 	const getSpeedComment = (speed, standard) => {
 		var performance = speed / standard;
