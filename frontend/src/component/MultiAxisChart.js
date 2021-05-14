@@ -9,37 +9,30 @@ class MultiAxisChart extends Component {
   constructor(props) {
 		super(props);
 		this.toggleDataSeries = this.toggleDataSeries.bind(this);
-    // console.log(props.data);
     this.state = {
-      datapoints_Y: [
-        { x: 1, y: 120 },
-        { x: 2, y: 135 },
-        { x: 3, y: 144 },
-        { x: 4, y: 103 },
-        { x: 5, y: 93 },
-        { x: 6, y: 129 },
-        { x: 7, y: 143 },
-        { x: 8, y: 156 },
-        { x: 9, y: 122 },
-        { x: 10, y: 106 }
-      ],
-      datapoints_Y2: [
-        { x: 1, y: 19034.5 },
-        { x: 2, y: 20015 },
-        { x: 3, y: 27342 },
-        { x: 4, y: 20088 },
-        { x: 5, y: 20234 },
-        { x: 6, y: 29034 },
-        { x: 7, y: 30487 },
-        { x: 8, y: 32523 },
-        { x: 9, y: 20234 },
-        { x: 10, y: 27234 }
-      ]
+      datapoints_Y: this.assignDatapoints(props.roundPerHour),
+      datapoints_Y2: this.assignDatapoints(props.pointsPerHour)
     }
 	}
 
+  assignDatapoints = (datapoints = []) => {
+    let datapts = [];
+    datapoints.map((datapoint, i) => {
+      datapts.push({ x: i + 1, y: datapoint });
+    });
+    return datapts;
+  }
+
   componentDidMount = () => {
-    console.log(this.props.data);
+    // console.log(this.props.roundMaxPt);
+    // console.log(this.props.pointsPerHour);
+    // console.log(this.props.roundPerHour);
+  }
+
+  componentDidUpdate = () => {
+    // console.log(this.props.roundMaxPt);
+    // console.log(this.props.pointsPerHour);
+    // console.log(this.props.roundPerHour);
   }
 
   toggleDataSeries = (e) => {
@@ -94,15 +87,15 @@ class MultiAxisChart extends Component {
         type: "spline",
         name: "回数/hr",
         showInLegend: true,
-        yValueFormatString: "#,##0 Round",
+        yValueFormatString: "#,##0",
         dataPoints: this.state.datapoints_Y
       },
       {
         type: "spline",
-        name: "イベントPT",
+        name: "イベントPT/hr",
         axisYType: "secondary",
         showInLegend: true,
-        yValueFormatString: "$#,##0.#",
+        yValueFormatString: "#,##0.#",
         dataPoints: this.state.datapoints_Y2
       }]
     }

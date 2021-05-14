@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component, useRef } from 'react';
 import TextField from '@material-ui/core/TextField';
 import RankingTop10 from './RankingTop10';
 import MultiAxisChart from './MultiAxisChart';
@@ -20,6 +20,9 @@ class Ranking extends Component {
         {id: 4, gameId: 0, name: ""},
         {id: 5, gameId: 0, name: ""}
       ],
+      maxPoint: -1,
+      pointPerHour: [],
+      roundPerHour: [],
     };
   }
 
@@ -87,7 +90,6 @@ class Ranking extends Component {
       this.setState({
         trackingIDs: [...temp]
       });
-      // console.log(this.state.trackingIDs[index]);
     }
     else {
       console.log("Nothing match (game id field).")
@@ -109,6 +111,24 @@ class Ranking extends Component {
     }
   }
 
+  onRoundMaxPtChange(maxPt) {
+    this.setState({
+      maxPoint: maxPt
+    });
+  }
+
+  onPointPerHourChange(points) {
+    this.setState({
+      pointPerHour: points
+    });
+  }
+
+  onRoundPerHourChange(rounds) {
+    this.setState({
+      roundPerHour: rounds
+    });
+  }
+
   render() {
     return (
       <div>
@@ -124,6 +144,9 @@ class Ranking extends Component {
             eventStartTimestamp={this.state.eventDetail.startAt}
             eventDuration={this.state.eventDetail.eventDurationHr}
             maintainenceHr={this.state.maintainenceHr}
+            onMaxPtChange={(e) => this.onRoundMaxPtChange(e)}
+            onPointPHChange={(e) => this.onPointPerHourChange(e)}
+            onRoundPHChange={(e) => this.onRoundPerHourChange(e)}
           />
         </div>
         <div className="trackDetail left">
@@ -160,10 +183,15 @@ class Ranking extends Component {
           ))}
         </div>
         <div className="trackDetail right">
-          {/* <MultiAxisChart 
+          {this.state.maxPoint > -1 && this.state.pointPerHour !== [] && this.state.roundPerHour !== [] ? 
+          (<MultiAxisChart 
             data={this.state.eventDetail}
-            roundMaxPt={7350}
-          /> */}
+            roundMaxPt={this.state.maxPoint}
+            pointsPerHour={this.state.pointPerHour}
+            roundPerHour={this.state.roundPerHour}
+          />) :
+           null
+          }
         </div>
       </div>
     );

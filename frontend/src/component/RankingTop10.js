@@ -7,14 +7,25 @@ import EventProgress from './EventProgress';
 import DarkModeBtn from './DarkModeBtn';
 import { useTranslation } from 'react-i18next';
 
-export default function RankingTop10({data, trackData, eventStartTimestamp, eventDuration, maintainenceHr}) {
+export default function RankingTop10({
+	data, 
+	trackData, 
+	eventStartTimestamp, 
+	eventDuration, 
+	maintainenceHr, 
+	onMaxPtChange,
+	onPointPHChange,
+	onRoundPHChange
+}) {
 
 	const [rowRecord, setRowRecord] = useState([[]]);
 	const [gridApi, setGridApi] = useState(null);
 	const [darkMode, setDarkMode] = useState(true);
 	const [columnDefs, setColumnDefs] = useState([]);
-	const [roundMaxPt, setRoundMaxPt] = useState(-1);
 	const [fastestRound, setFastestRound] = useState(127);
+	const [roundMaxPt, setRoundMaxPt] = useState(-1);
+	var pointsPerHour = [];
+	var roundsPerHour = [];
 
 	// Translation
 	const { t } = useTranslation();
@@ -46,7 +57,6 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
   function onGridReady(params) {
 		setGridApi(params.api);
 		console.log(gridApi);
-		// setColumnDefs(colDef);
 	}
  
 	function setNameCellStyle(params) {
@@ -148,6 +158,8 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 
 	function getTop10Data(data) {
 		let result = [];
+		let points = [];
+		let rounds = [];
 		let round_MaxPt = 0;
 		if(data.topUsers) {
 			let top10 = data.topUsers;
@@ -176,21 +188,47 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 					speed_in_theory: (getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt).toFixed(2),
 					comment: getSpeedComment((getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt), getActualRoundWithId(top10[i].userId))
 				});
+				points.push(getPointDiffInPeriod(top10[i].userId, 60));
+				rounds.push(getActualRoundWithId(top10[i].userId));
 				if(round_MaxPt < (result[i].point_60mins / result[i].valid_round)) {
 					round_MaxPt = (result[i].point_60mins / result[i].valid_round);
 				}
 			}
-			if(round_MaxPt !== 0 && roundMaxPt !== parseInt(round_MaxPt)) {
-				setRoundMaxPt(parseInt(round_MaxPt));
-			}
+			updateRoundMaxPt(round_MaxPt);
+			updatePointsPerHour(points);
+			updateRoundsPerHour(rounds);
 		}
 		return result;
 	}
 
+	const updateRoundMaxPt = (roundPt) => {
+		if(roundPt !== 0 && roundMaxPt !== parseInt(roundPt)) {
+			setRoundMaxPt(parseInt(roundPt));
+		}
+	}
+
+	const updatePointsPerHour = (points) => {
+		if(points.length === data.topUsers.length) {
+			pointsPerHour = points;
+		}
+	}
+
+	const updateRoundsPerHour = (rounds) => {
+		if(rounds.length === data.topUsers.length) {
+			roundsPerHour = rounds;
+		}
+	}
+
 	useEffect(() => {
 		if(roundMaxPt > -1) {
-			// console.log(roundMaxPt);
 			setColumnDefs(colDef);
+			onMaxPtChange(roundMaxPt);
+		}
+		if(roundsPerHour.length === 10) {
+			onRoundPHChange(roundsPerHour);
+		}
+		if(pointsPerHour.length === 10) {
+			onPointPHChange(pointsPerHour);
 		}
 	}, [roundMaxPt]);
 
@@ -303,6 +341,7 @@ export default function RankingTop10({data, trackData, eventStartTimestamp, even
 
 	const onChangeLanguage = () => {
 		setColumnDefs(colDef);
+		console.log("change lang called!");
 	} 
 	
   const onChangeDarkMode = (e) => {
