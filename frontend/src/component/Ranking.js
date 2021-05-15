@@ -23,6 +23,7 @@ class Ranking extends Component {
       maxPoint: -1,
       pointPerHour: [],
       roundPerHour: [],
+      speedTheoryPerHour: [],
     };
   }
 
@@ -129,6 +130,12 @@ class Ranking extends Component {
     });
   }
 
+  onSpeedTheoryPerHourChange(speedTheory) {
+    this.setState({
+      speedTheoryPerHour: speedTheory
+    });
+  }
+
   render() {
     return (
       <div>
@@ -147,6 +154,7 @@ class Ranking extends Component {
             onMaxPtChange={(e) => this.onRoundMaxPtChange(e)}
             onPointPHChange={(e) => this.onPointPerHourChange(e)}
             onRoundPHChange={(e) => this.onRoundPerHourChange(e)}
+            onSpeedTheoryPHChange={(e) => this.onSpeedTheoryPerHourChange(e)}
           />
         </div>
         <div className="trackDetail left">
@@ -183,12 +191,16 @@ class Ranking extends Component {
           ))}
         </div>
         <div className="trackDetail right">
-          {this.state.maxPoint > -1 && this.state.pointPerHour !== [] && this.state.roundPerHour !== [] ? 
+          {this.state.maxPoint > -1 
+          && this.state.pointPerHour !== [] 
+          && this.state.roundPerHour !== []
+          && this.state.speedTheoryPerHour !== [] ? 
           (<MultiAxisChart 
             data={this.state.eventDetail}
             roundMaxPt={this.state.maxPoint}
             pointsPerHour={this.state.pointPerHour}
             roundPerHour={this.state.roundPerHour}
+            speedTheoryPerHour={this.state.speedTheoryPerHour}
           />) :
            null
           }

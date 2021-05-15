@@ -15,7 +15,8 @@ export default function RankingTop10({
 	maintainenceHr, 
 	onMaxPtChange,
 	onPointPHChange,
-	onRoundPHChange
+	onRoundPHChange,
+	onSpeedTheoryPHChange
 }) {
 
 	const [rowRecord, setRowRecord] = useState([[]]);
@@ -26,6 +27,7 @@ export default function RankingTop10({
 	const [roundMaxPt, setRoundMaxPt] = useState(-1);
 	var pointsPerHour = [];
 	var roundsPerHour = [];
+	var speedTheoryPerHour = [];
 
 	// Translation
 	const { t } = useTranslation();
@@ -160,6 +162,7 @@ export default function RankingTop10({
 		let result = [];
 		let points = [];
 		let rounds = [];
+		let speedTheory = [];
 		let round_MaxPt = 0;
 		if(data.topUsers) {
 			let top10 = data.topUsers;
@@ -190,6 +193,7 @@ export default function RankingTop10({
 				});
 				points.push(getPointDiffInPeriod(top10[i].userId, 60));
 				rounds.push(getActualRoundWithId(top10[i].userId));
+				speedTheory.push((getPointDiffInPeriod(top10[i].userId, 60) / roundMaxPt).toFixed(2));
 				if(round_MaxPt < (result[i].point_60mins / result[i].valid_round)) {
 					round_MaxPt = (result[i].point_60mins / result[i].valid_round);
 				}
@@ -197,6 +201,7 @@ export default function RankingTop10({
 			updateRoundMaxPt(round_MaxPt);
 			updatePointsPerHour(points);
 			updateRoundsPerHour(rounds);
+			updateSpeedTheoryPerHour(speedTheory);
 		}
 		return result;
 	}
@@ -219,6 +224,12 @@ export default function RankingTop10({
 		}
 	}
 
+	const updateSpeedTheoryPerHour = (speedTheory) => {
+		if(speedTheory.length === data.topUsers.length) {
+			speedTheoryPerHour = speedTheory;
+		}
+	}
+
 	useEffect(() => {
 		if(roundMaxPt > -1) {
 			setColumnDefs(colDef);
@@ -229,6 +240,9 @@ export default function RankingTop10({
 		}
 		if(pointsPerHour.length === 10) {
 			onPointPHChange(pointsPerHour);
+		}
+		if(speedTheoryPerHour.length === 10) {
+			onSpeedTheoryPHChange(speedTheoryPerHour);
 		}
 	}, [roundMaxPt]);
 
