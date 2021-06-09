@@ -163,7 +163,7 @@ class Ranking extends Component {
               <TextField
                 label="玩家ID"
                 type="number"
-                style={{ background: "white", borderRadius: "5px", width: "40%" }}
+                style={{ background: "white", borderRadius: "5px", minWidth: "160px", width: "40%" }}
                 defaultValue={tracking.gameId}
                 onChange={i, e => this.onTrackIDChange(i, e)}
                 name={"track_id"+i}
@@ -175,9 +175,8 @@ class Ranking extends Component {
               />
               &nbsp;
               <TextField
-                
                 label="自行更改暱稱"
-                style={{ background: "white", borderRadius: "5px", width: "40%" }}
+                style={{ background: "white", borderRadius: "5px", minWidth: "160px", width: "40%" }}
                 defaultValue={tracking.name}
                 onChange={i, e => this.onTrackNameChange(i, e)}
                 name={"track_name"+i}
