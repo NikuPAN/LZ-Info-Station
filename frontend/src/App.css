@@ -71,10 +71,12 @@ h6 {
 }
 
 .left {
+  min-width: 360px;
   width: 30%;
 }
 
 .right {
+  min-width: 375px;
   width: 67.5%;
 }
 
@@ -96,8 +98,8 @@ h6 {
 
 .progress {
   width: 98.75%;
-  float:left;
-  display:inline;
+  float: left;
+  display: inline;
   background-color: inherit;
 }
 

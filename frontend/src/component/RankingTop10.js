@@ -71,13 +71,13 @@ export default function RankingTop10({
       return null;
     let val = params.value;
     if(val < -85) {
-      return { /*color: '#99cc33', fontWeight: 'bold', */ color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd' }; // light green
+      return { color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd' }; // light green
     }
     else if(val <- 30 && val >= -85) {
-      return { /*color: '#ffcc00', fontWeight: 'bold' , */ color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2' }; // light yellow
+      return { color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2' }; // light yellow
     }
     else if(val >= -30) {
-      return { /*color: '#ff9966', fontWeight: 'bold' , */ color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3' }; // light red
+      return { color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3' }; // light red
     }
     return null;
   }
@@ -89,13 +89,13 @@ export default function RankingTop10({
 			return null;
     let val = fromTimeStrToMin(params.value);
     if(val > factor * 3) {
-      return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#b7e1cd' }; // light green
+      return { color: '#000', fontWeight: 'bold' , backgroundColor: '#b7e1cd' }; // light green
     }
     else if(val > factor && val <= factor * 3) {
-      return { /*color: '#ffcc00'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#fce8b2' }; // light yellow
+      return { color: '#000', fontWeight: 'bold' , backgroundColor: '#fce8b2' }; // light yellow
     }
     else if(val >= 0 && val <= factor) {
-      return { /*color: '#ff9966'*/ color: '#000', fontWeight: 'bold' , backgroundColor: '#f4c7c3' }; // light red
+      return { color: '#000', fontWeight: 'bold' , backgroundColor: '#f4c7c3' }; // light red
     }
     return null;
   }
@@ -124,13 +124,13 @@ export default function RankingTop10({
 	function setRestCellStyle(params, factor) {
 		let val = params.value;
 		if(val < factor) {
-			return { /*color: '#ff9966'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3'}; // light red
+			return { color: '#000', fontWeight: 'bold', backgroundColor: '#f4c7c3'}; // light red
 		}
 		else if(val >= factor && val < factor * 3) {
-			return { /*color: '#ffcc00'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2'}; // light yellow
+			return { color: '#000', fontWeight: 'bold', backgroundColor: '#fce8b2'}; // light yellow
 		}
 		else {
-			return { /*color: '#99cc33'*/ color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd'}; // light green
+			return { color: '#000', fontWeight: 'bold', backgroundColor: '#b7e1cd'}; // light green
 		}
 	}
 
@@ -270,7 +270,7 @@ export default function RankingTop10({
 		var min = dateobj.getMinutes();
 		//var ss = dateobj.getSeconds();
 		return (yy+'-'+(mm>=10?mm:'0'+mm)+'-'+(dd>=10?dd:'0'+dd)+' '
-					+(hh>=10?hh:'0'+hh)+':'+(min>=10?min:'0'+min)/*+':'+(ss>=10?ss:'0'+ss)*/);
+					+(hh>=10?hh:'0'+hh)+':'+(min>=10?min:'0'+min));
 	}
 
 	function getTimeDifference(timestamp1, timestamp2) {
