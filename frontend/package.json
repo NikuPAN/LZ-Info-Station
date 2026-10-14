@@ -17,7 +17,7 @@
     "date-fns": "^2.14.0",
     "i18next": "^19.9.0",
     "i18next-browser-languagedetector": "^6.0.1",
-    "i18next-http-backend": "^1.1.1",
+    "i18next-http-backend": "^4.0.2",
     "ngrok": "^3.2.7",
     "react": "^16.13.1",
     "react-bootstrap": "^1.4.3",
